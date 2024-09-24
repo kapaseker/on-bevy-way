@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>事件 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">1.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">2.</strong> 行为</a></li><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">3.</strong> 应用</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">4.</strong> 系统</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">5.</strong> 资源</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">6.</strong> 实体</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">7.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">8.</strong> 查询</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">9.</strong> 命令</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">10.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">11.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">12.</strong> 时间</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">13.</strong> 摄像机</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">14.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">15.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">16.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">17.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="play_sound.html"><strong aria-hidden="true">18.</strong> 播放音频</a></li><li class="chapter-item expanded "><a href="event.html" class="active"><strong aria-hidden="true">19.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">20.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">21.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html"><strong aria-hidden="true">22.</strong> 状态</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="事件"><a class="header" href="#事件">事件</a></h1>
+<p>将数据在系统之间传递！让你的系统彼此通信！</p>
+<p>像资源或组件一样，事件是简单的 Rust 结构体或枚举。当创建一个新的事件类型时，派生 Event Trait。</p>
+<p>然后，任何系统都可以发送（广播）该类型的值，任何系统都可以接收这些事件。</p>
+<p>要发送事件，请使用 EventWriter&lt;T&gt;。 要接收事件，请使用 EventReader&lt;T&gt;。 每个读取器独立跟踪它已读取的事件，因此你可以从多个系统处理相同的事件。</p>
+<pre><code class="language-rust">fn add_experiences(
+    mut commands: Commands,
+    mut player: Query&lt;&amp;mut Player&gt;,
+    mut experience_reader: EventReader&lt;AddExperience&gt;,
+    mut upgrade_writer: EventWriter&lt;PlayerUpgrade&gt;,
+) {
+    let Ok(mut player) = player.get_single_mut() else {
+        return;
+    };
+    let previous_level = player.level;
+    for &amp;AddExperience { entity, experience } in experience_reader.read() {
+        player.current_experience += experience;
+        while player.current_experience &gt;= player.upgrade_experience[player.level as usize] {
+            player.current_experience -= player.upgrade_experience[player.level as usize];
+            player.level += 1;
+        }
+        commands.entity(entity).despawn();
+    }
+    let upgrade_level = player.level - previous_level;
+    if upgrade_level &gt; 0 {
+        upgrade_writer.send(PlayerUpgrade(upgrade_level));
+    }
+}</code></pre>
+<p>你需要通过应用程序构建器注册自定义事件类型：</p>
+<pre><code class="language-rust">app.add_event::&lt;PlayerUpgrade&gt;()</code></pre>
+<h2 id="使用建议"><a class="header" href="#使用建议">使用建议</a></h2>
+<p>事件应该是你的首选数据流工具。由于事件可以从任何系统发送并被多个系统接收，它们非常通用。</p>
+<p>事件可以是一个非常有用的抽象层。它们允许你解耦功能，从而更容易推理哪个系统负责什么。</p>
+<p>你可以想象，即使在上面展示的简单“玩家升级”示例中，使用事件也可以让我们轻松扩展假设的游戏功能。如果我们想显示一个华丽的升级效果或动画，更新 UI 或其他任何东西，我们只需添加更多读取事件并执行各自任务的系统。</p>
+<h2 id="工作原理"><a class="header" href="#工作原理">工作原理</a></h2>
+<p>当你注册一个事件类型时，Bevy 会创建一个 Events&lt;T&gt; 资源，作为事件队列的后备存储。Bevy 还添加了一个“事件维护”系统，定期清除事件，防止它们积累并占用内存。</p>
+<p>Bevy 确保事件至少保留两个帧更新周期或两个固定时间步长周期，以较长者为准。之后，它们会被静默丢弃。这给你的系统足够的机会来处理它们，假设你的系统一直在运行。注意，当为你的系统添加运行条件时，你可能会错过一些事件，因为你的系统没有运行！</p>
+<p>如果你不喜欢这样，你可以手动控制何时清除事件（如果忘记清除，可能会导致内存泄漏/浪费）。</p>
+<p>EventWriter&lt;T&gt; 系统参数只是语法糖，用于可变地访问 Events&lt;T&gt; 资源以将事件添加到队列中。EventReader&lt;T&gt; 稍微复杂一些：它不可变地访问事件存储，但也存储一个整数计数器来跟踪你已读取的事件数量。这就是为什么它也需要 mut 关键字。</p>
+<p>Events&lt;T&gt; 本身是使用简单的 Vec 实现的。发送事件相当于向 Vec 推送。这非常快，开销低。事件通常是 Bevy 中实现功能的最有效方式，比使用变更检测更好。</p>
+<h2 id="可能的陷阱"><a class="header" href="#可能的陷阱">可能的陷阱</a></h2>
+<p>注意帧延迟/1帧滞后。如果 Bevy 在发送系统之前运行接收系统，则接收系统只有在下次运行时才有机会接收事件。如果你需要确保事件在同一帧上处理，可以使用显式系统排序。</p>
+<p>如果你的系统有运行条件，注意它们在不运行时可能会错过一些事件！如果你的系统没有至少每隔一帧或固定时间步检查一次事件，这些事件将会丢失。</p>
+<p>如果你希望事件保留更长时间，可以实现自定义的清理/管理策略。然而，你只能对自己的事件类型这样做。对于 Bevy 的内置类型，没有解决方案。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="play_sound.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="local.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="play_sound.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="local.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

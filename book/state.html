@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>状态 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">1.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">2.</strong> 行为</a></li><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">3.</strong> 应用</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">4.</strong> 系统</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">5.</strong> 资源</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">6.</strong> 实体</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">7.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">8.</strong> 查询</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">9.</strong> 命令</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">10.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">11.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">12.</strong> 时间</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">13.</strong> 摄像机</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">14.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">15.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">16.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">17.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="play_sound.html"><strong aria-hidden="true">18.</strong> 播放音频</a></li><li class="chapter-item expanded "><a href="event.html"><strong aria-hidden="true">19.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">20.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">21.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html" class="active"><strong aria-hidden="true">22.</strong> 状态</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="状态"><a class="header" href="#状态">状态</a></h1>
+<p>状态允许你构建应用程序的运行时“流程”。</p>
+<p>这就是你可以实现以下功能的方式：</p>
+<ul>
+<li>菜单或加载画面</li>
+<li>暂停/开始游戏</li>
+<li>不同的游戏模式
+…</li>
+</ul>
+<p>在每个状态中，你可以运行不同的系统。你还可以添加设置和清理系统，以在进入或退出状态时运行。</p>
+<p>要使用状态，首先定义一个枚举类型。你需要派生 States 和一组必需的Rust Trait：</p>
+<pre><code class="language-rust">#[derive(States, Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+enum GameState {
+    #[default]
+    Menu,
+    Playing,
+    Paused,
+}</code></pre>
+<p>注意：你可以有多个正交状态！如果你想独立跟踪多个事物，请创建多个类型！</p>
+<p>然后，你需要在应用程序构建器中注册状态类型：</p>
+<pre><code class="language-rust">app.init_state::&lt;GameState&gt;();
+
+app.insert_state(GameState::Menu);</code></pre>
+<h2 id="为不同状态运行不同的系统"><a class="header" href="#为不同状态运行不同的系统">为不同状态运行不同的系统</a></h2>
+<p>如果你希望某些系统仅在特定状态下运行，Bevy 提供了一个 in_state 运行条件。将其添加到你的系统中。你可能希望创建系统集来帮助你一次性分组和控制多个系统。</p>
+<pre><code class="language-rust">app.add_systems(Update, (start_button_action, exit_button_action).run_if(in_state(GameState::Menu)));
+
+
+#[derive(SystemSet, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+struct ButtonSystemSet;
+
+app.configure_sets(ButtonSystemSet.run_if(in_state(GameState::Menu)))
+  .add_systems(Update, (start_button_action, exit_button_action).in_set(ButtonSystemSet));</code></pre>
+<p>Bevy 还为你的状态类型的每个可能值创建了特殊的 OnEnter、OnExit 和 OnTransition 调度。使用它们来执行特定状态的设置和清理。你添加到它们的任何系统将在每次状态更改为/从相应值时运行一次。</p>
+<pre><code class="language-rust">app.add_systems(OnEnter(GameState::Menu), spawn_game_menu)
+  .add_systems(OnExit(GameState::Menu), despawn_game_menu)
+  .add_systems(OnTransition{ exited: GameState::Menu, entered: GameState::Playing}, spawn_balls);</code></pre>
+<h2 id="使用插件"><a class="header" href="#使用插件">使用插件</a></h2>
+<p>这在使用插件时也很有用。你可以在一个地方设置项目的所有状态类型，然后你的不同插件可以将其系统添加到相关状态。</p>
+<p>你还可以制作可配置的插件，以便可以指定它们应将系统添加到哪个状态：</p>
+<pre><code class="language-rust">pub struct MyPlugin&lt;S: States&gt; {
+    pub state: S,
+}
+
+impl&lt;S: States&gt; Plugin for MyPlugin&lt;S&gt; {
+    fn build(&amp;self, app: &amp;mut App) {
+        app.add_systems(Update, (
+            my_plugin_system1,
+            my_plugin_system2,
+        ).run_if(in_state(self.state.clone())));
+    }
+}</code></pre>
+<p>现在，你可以在将插件添加到应用程序时配置插件：</p>
+<pre><code class="language-rust">app.add_plugins(MyPlugin {
+    state: MyAppState::InGame,
+});</code></pre>
+<p>当你只是使用插件来帮助项目的内部组织，并且知道哪些系统应该进入每个状态时，你可能不需要像上面那样使插件可配置。只需硬编码状态/直接将内容添加到正确的状态。</p>
+<h2 id="控制状态"><a class="header" href="#控制状态">控制状态</a></h2>
+<p>在系统内部，你可以使用 State&lt;T&gt; 资源检查当前状态。要更改为另一个状态，你可以使用 NextState&lt;T&gt;：</p>
+<pre><code class="language-rust">fn toggle_palying_paused(
+    state: Res&lt;State&lt;GameState&gt;&gt;,
+    mut next_state: ResMut&lt;NextState&lt;GameState&gt;&gt;,
+) {
+    match state.get() {
+        GameState::Playing =&gt; next_state.set(GameState::Paused),
+        GameState::Paused =&gt; next_state.set(GameState::Playing),
+        GameState::Menu =&gt; (),
+    }
+}</code></pre>
+<h2 id="状态转换"><a class="header" href="#状态转换">状态转换</a></h2>
+<p>每帧更新时，会运行一个名为 StateTransition 的调度。在那里，Bevy 将检查是否有任何新状态排队在 NextState&lt;T&gt; 中，并为你执行转换。</p>
+<p>转换涉及几个步骤：</p>
+<ul>
+<li>
+<p>发送 StateTransitionEvent 事件。</p>
+</li>
+<li>
+<p>运行 <code>rs OnExit(old_state)</code> 调度。</p>
+</li>
+<li>
+<p>运行 <code>rs OnTransition { from: old_state, to: new_state }</code> 调度。</p>
+</li>
+<li>
+<p>运行 <code>rs OnEnter(new_state)</code> 调度。
+StateTransitionEvent在任何无论状态如何运行但想要知道是否发生转换的系统中都很有用。您可以使用它来检测状态转换。</p>
+</li>
+</ul>
+<p>StateTransition 调度在 PreUpdate（包含 Bevy 引擎内部）之后运行，但在 FixedMain（固定时间步长）和 Update 之前运行，你的游戏系统通常位于其中。</p>
+<p>因此，状态转换发生在当前帧的游戏逻辑之前。</p>
+<p>如果每帧进行一次状态转换对你来说还不够，你可以通过在任何地方添加 Bevy 的 apply_state_transition 系统来添加额外的转换点。</p>
+<pre><code class="language-rust">app.add_systems(FixedUpdate, apply_state_transition::&lt;MyPausedState&gt;);</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="schedule.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="schedule.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
