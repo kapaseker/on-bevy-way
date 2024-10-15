@@ -101,11 +101,11 @@ fn toggle_palying_paused(
 
 - 发送 StateTransitionEvent 事件。
 
-- 运行 ```rs OnExit(old_state)``` 调度。
+- 运行 ```rust OnExit(old_state)``` 调度。
 
-- 运行 ```rs OnTransition { from: old_state, to: new_state }``` 调度。
+- 运行 ```rust OnTransition { from: old_state, to: new_state }``` 调度。
 
-- 运行 ```rs OnEnter(new_state)``` 调度。
+- 运行 ```rust OnEnter(new_state)``` 调度。
 StateTransitionEvent在任何无论状态如何运行但想要知道是否发生转换的系统中都很有用。您可以使用它来检测状态转换。
 
 StateTransition 调度在 PreUpdate（包含 Bevy 引擎内部）之后运行，但在 FixedMain（固定时间步长）和 Update 之前运行，你的游戏系统通常位于其中。
