@@ -345,32 +345,388 @@ App::new()
   .add_systems(Update, system_1.in_set(MySystemSet::First))
   .add_systems(Update, (system_2, system_3).in_set(MySystemSet::Last))
   .run()</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="应用"><a class="header" href="#应用">应用</a></h1>
-<p>App 是你定义构成项目的所有事物的方式：插件、系统（运行条件、排序、系统集）、事件类型、状态、调度等。</p>
-<pre><code class="language-rust">App::new()
-  .add_plugins(MinimalPlugins)
-  .register_type::&lt;MyReflectCompoent&gt;()
-  .register_type_data::&lt;MyReflectCompoent, ReflectMyReflectTrait&gt;()
-  .init_state::&lt;GameState&gt;()
-  .insert_state(GameState::Start)
-  .init_resource::&lt;MyResource&gt;()
-  .insert_resource(InsertMyResource { field_1: 0., field_2: 0 })
-  .add_event::&lt;MyEvent&gt;()
-  .configure_sets(Startup, MySystemSet)
-  .add_systems(Startup, system.in_set(MySystemSet))
-  .run()</code></pre>
-<h2 id="内置-bevy-功能"><a class="header" href="#内置-bevy-功能">内置 Bevy 功能</a></h2>
-<p>Bevy 游戏引擎的功能被表示为插件，根据不同的场景将内置插件合成了插件组。</p>
-<ul>
-<li>
-<p><code>DefaultPlugins</code>：如果你正在制作完整的游戏/应用。</p>
-<p>有 日志插件（LogPlugin）、任务池插件（TaskPoolPlugin）、窗口插件（WindowPlugin）、资产插件（AssetPlugin）、窗口管理插件（WinitPlugin）、渲染插件（RenderPlugin）、图片插件（ImagePlugin）、Pbr 插件（PbrPlugin）、Gltf 插件（GltfPlugin）、音频插件（AudioPlugin）等提供配置选项的插件。</p>
-</li>
-<li>
-<p><code>MinimalPlugins</code>：用于类似无头服务器（独立运行的服务，不需要界面交互）的东西。</p>
-<p>有 任务池插件（TaskPoolPlugin）、类型注册插件（TypeRegistrationPlugin）、帧计数插件（FrameCountPlugin）、时间插件（TimePlugin）、时间表运行器插件（SheduleRunnerPlugin）、CI 测试插件（CiTestingPlugin）全部插件。</p>
-</li>
-</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="app"><a class="header" href="#app">App</a></h1>
+<p><code>App</code>控制游戏的主循环，让<code>system</code>可以更新<code>world</code>。</p>
+<p><code>App</code>有两个核心部分：</p>
+<ol>
+<li><code>World</code>，可以保存数据（实体<code>entities</code>，组件<code>components</code>）。</li>
+<li><code>Schedule</code>， 执行我们的逻辑（系统<code>systems</code>）。</li>
+</ol>
+<p><code>Schedule</code>由<code>run</code>函数推进，我们可以覆盖该函数以微调游戏循环的行为。</p>
+<p>不同的游戏需要不同类型的循环。《英雄联盟》和《反恐精英》的循环肯定就不一样。我们的<code>run</code>函数可以进行调整以满足我们特定游戏的需求。</p>
+<p>使用<code>run</code>函数推进计划将调用<code>systems</code>，该<code>system</code>将操作我们<code>World</code>中的数据。</p>
+<h2 id="定义app"><a class="header" href="#定义app">定义App</a></h2>
+<p>我们在<code>main.rs</code>中定义我们的<code>App</code>，该应用程序将在编译后运行二进制文件时执行。</p>
+<p>调用<code>App::run</code>将启动循环并开始使用<code>run</code>函数推进您的计划。</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_systems(Update, hello_world_system)
+    .run();
+}
+
+fn hello_world_system() {
+  println!("hello world");
+}</code></pre>
+<p><code>DefaultPlugins</code>添加了核心插件，这些插件允许您的游戏在操作系统提供的窗口上渲染。除非您尝试在 Headless 模式（没有任何图形）下运行，或者有充分的理由这样做，否则我们始终将其包含在我们的<code>App</code>定义中。</p>
+<h2 id="plugins"><a class="header" href="#plugins">Plugins</a></h2>
+<p><strong>Bevy</strong>使用一种将游戏组织成为单个功能的架构，叫插件。</p>
+<p>假设一个功能<em>Physics</em>。<strong>Bevy</strong>允许我们编写一个<code>PhysicsPlugin</code>，为游戏添加物理特性。</p>
+<p>插件可将我们功能的所有设置、运行时行为捆绑到一起，并单独控制插件的打开和关闭。</p>
+<p>当你想使用<code>bevy_rapier</code>这样的库时，你可以通过添加插件来获得相关功能。</p>
+<p>添加插件，我们只需调用<code>App::add_plugins</code>并传入实现<code>Plugin trait</code>的内容：</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(GamePlugin)
+    .add_plugins(PhysicsPlugin)
+    .add_plugins(CameraPlugin)
+    .run()
+}</code></pre>
+<p>我们通过在结构体上实现<code>Plugin</code>并重写方法<code>build</code>来创建一个插件。</p>
+<pre><code class="language-rust">pub struct CameraPlugin;
+
+impl Plugin for CameraPlugin {
+  fn build(&amp;self, app: &amp;mut App) {
+    app.add_systems(Startup, initialize_camera);
+  }
+}
+
+fn initialize_camera(mut commands: Commands) {
+  commands.spawn(Camera2dBundle::default());
+}</code></pre>
+<p>我们也可以简化我们的插件，只定义一个函数并直接使用：</p>
+<pre><code class="language-rust">pub fn camera_plugin(app: &amp;mut App) {
+  app.add_systems(Startup, initialize_camera);
+}
+
+fn initialize_camera(mut commands: Commands) {
+  commands.spawn(Camera2dBundle::default());
+}
+
+fn main() {
+  App::new()
+    .add_plugins(camera_plugin)
+}</code></pre>
+<p>插件的理想情况是它启用一项功能，并且可以轻松打开和关闭，而不会影响游戏的其余部分。</p>
+<p>通过执行必要的设置（例如向游戏添加<code>systems</code>、<code>resources </code>和<code>events </code>），每个插件都负责将其行为注入到游戏循环中。</p>
+<p>通常，保持<code>main.rs</code>文件非常干净并将核心逻辑移出到像<code>GamePlugin</code>这样的插件中很方便，它可以进一步调用运行游戏核心部分所需的其他插件。</p>
+<h2 id="插件配置"><a class="header" href="#插件配置">插件配置</a></h2>
+<p>我们可以为<code>Plugin</code>提供选项来配置我们的插件：</p>
+<pre><code class="language-rust">pub struct CameraPlugin {
+  debug: bool,
+}
+
+impl Plugin for CameraPlugin {
+  fn build(&amp;self, app: &amp;mut App) {
+    app.add_systems(Startup, initialize_camera);
+
+    if self.debug {
+      // Do something
+    }
+  }
+}</code></pre>
+<p>还有一些<code>PluginGroup</code>类型，它们允许我们将相关的插件组合在一起，然后在以后配置它们，这对于编写其他人可以添加到他们的游戏中的插件非常有用：</p>
+<pre><code class="language-rust">pub struct GamePlugins;
+
+impl PluginGroup for GamePlugins {
+  fn build(self) -&gt; PluginGroupBuilder {
+    PluginGroupBuilder::start::&lt;Self&gt;()
+      .add(CameraPlugin::default())
+      .add(PhysicsPlugin::default())
+      .add(LogicPlugin)
+  }
+}</code></pre>
+<p><code>PluginGroup</code>允许我们准确配置每个<code>Plugin</code>的工作方式：</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_plugins(
+      game::GamePlugins
+        .build()
+        .disable::&lt;physics::PhysicsPlugin&gt;()
+    )
+    .run();
+}</code></pre>
+<h2 id="running-apps"><a class="header" href="#running-apps">Running apps</a></h2>
+<p>当我们运行一个<code>App</code>时，我们调用它的<code>App Runner</code>函数。</p>
+<p>根据运行程序函数的类型，调用通常永远不会返回，从而在无限循环中运行我们的游戏。</p>
+<p>我们可以在构建<code>App</code>时自定义默认<code>runner</code>：</p>
+<pre><code class="language-rust">// This app wil run once
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins.set(ScheduleRunnerPlugin::run_once()))
+    .add_plugins(game::GamePlugins.build())
+    .run();
+}</code></pre>
+<pre><code class="language-rust">// This app wil run 60 times per second
+fn main() {
+  App::new()
+    .add_plugins(
+      DefaultPlugins.set(
+        ScheduleRunnerPlugin::run_loop(
+          Duration::from_secs_f64(1.0 / 60.0)
+        )
+      )
+    )
+    .add_plugins(game::GamePlugins.build())
+    .run();
+}</code></pre>
+<p>如果默认值不适合我们的游戏循环，我们甚至可以提供我们自己的自定义<code>runner</code>函数：</p>
+<pre><code class="language-rust">#[derive(Resource)]
+struct Input(String);
+
+fn my_runner(mut app: App) -&gt; AppExit {
+  println!("Type stuff into the console");
+  for line in std::io::stdin().lines() {
+    {
+      let mut input = app.world_mut().resource_mut::&lt;Input&gt;();
+      input.0 = line.unwrap();
+    }
+    app.update();
+  }
+
+  AppExit::Success
+}
+
+fn main() {
+  App::new().set_runner(my_runner).run();
+}</code></pre>
+<p>从<code>0.14</code>开始，运行程序必须返回<code>AppExit::Success</code>。</p>
+<h2 id="schedules-1"><a class="header" href="#schedules-1">Schedules</a></h2>
+<p><code>Schedule</code>是集合元数据、系统和负责运行它们的执行程序。App将执行每个<code>Schedule</code>的<code>Schedule::run</code>。<code>Schedule::run</code>会传递<code>world</code>以便我们进行修改。</p>
+<p>我们得所有<code>Schedule</code>都存储在<code>Schedules Resource</code>中，该<code>Resource</code>将<code>ScheduleLabel</code>映射到其相应的<code>Schedule</code>。</p>
+<p>因此，当您定义应用程序并添加系统时，例如：</p>
+<pre><code class="language-rust">app.add_systems(Update, hello_world)</code></pre>
+<p><code>Update</code>是一个<code>ScheduleLabel</code>，它将映射到实际执行<code>hello_world</code> <code>system</code>的<code>Schedule</code>。</p>
+<p>我们还可以利用许多其他<code>ScheduleLabel</code>：</p>
+<ol>
+<li>PreStartup</li>
+<li>Startup</li>
+<li>PostStartup</li>
+<li>First</li>
+<li>PreUpdate</li>
+<li>StateTransition</li>
+<li>RunFixedUpdateLoop which runs FixedUpdate conditionally</li>
+<li>RunFixedUpdateLoop，它有条件地运行 FixedUpdate</li>
+<li>Update</li>
+<li>PostUpdate</li>
+<li>Last</li>
+</ol>
+<p>首次运行时，将触发启动计划：</p>
+<p><code>PreStartup</code> -&gt;  <code>Startup</code> -&gt;  <code>PostStartup</code> -&gt;</p>
+<p>然后，您的正常游戏循环开始：</p>
+<pre><code class="language-rust">v---------------------&lt;
+First -&gt;              |
+PreUpdate -&gt;          |
+StateTransition -&gt;    |
+RunFixedUpdateLoop -&gt; |
+Update -&gt;             |
+PostUpdate -&gt;         |
+Last -----------------^</code></pre>
+<p><code>RunFixedUpdateLoop</code>的实现与循环运行次数无关。相反，它只会在经过一定时间后运行计划<code>FixedUpdate</code>。</p>
+<p>以下是<strong>Bevy</strong>内部的草图：</p>
+<pre><code class="language-rust">#[derive(Resource)]
+struct FixedTimestepState {
+  accumulator: f64,
+  step: f64,
+}
+
+// An exclusive system that runs our FixedUpdate schedule manually
+fn fixed_timestep_system(world: &amp;mut World) {
+  world.resource_scope(|world, mut state: Mut&lt;FixedTimestepState&gt;| {
+    let time = world.resource::&lt;Time&gt;();
+    state.accumulator += time.delta_seconds_f64();
+
+    while state.accumulator &gt;= state.step {
+      world.run_schedule(FixedUpdate);
+      state.accumulator -= state.step;
+    }
+  });
+}
+
+fn main() {
+  App::new()
+    .add_systems(Update, fixed_timestep_system)
+    .run();
+}</code></pre>
+<p>这意味着，如果我们正在运行游戏测试，则添加到计划<code>FixedUpdate</code>的系统的行为将要经过正确的时间后才会运行。</p>
+<pre><code class="language-rust">#[cfg(test)]
+mod tests {
+  fn hello_world() {
+    println!("Hello World!");
+  }
+
+  fn test_fixed_game_loop() {
+    let app = App::new();
+    app.add_systems(FixedUpdate, hello_world);
+
+    app.update(); // This won't actually run the system
+  }
+}</code></pre>
+<p>这里没有简单的解决方案，因此我们一直将固定系统单元测试添加到<code>Update</code>计划中，以使其更易于控制。</p>
+<h2 id="app-states"><a class="header" href="#app-states">App States</a></h2>
+<p><code>App</code>始终处于某个<code>AppState</code>。此状态决定了运行哪个<code>Schedule</code>。</p>
+<p>因此，你的<code>App</code>就像一个有限状态机，你的游戏逻辑触发了状态上的迁移。</p>
+<h3 id="createing-app-state"><a class="header" href="#createing-app-state">createing app state</a></h3>
+<p><strong>Bevy</strong>中的<code>States</code>是实现<code>States trait</code>的任何枚举或结构体。</p>
+<pre><code class="language-rust">#[derive(Debug, Clone, Eq, PartialEq, Hash, Default, States)]
+enum AppState {
+  #[default]
+  MainMenu,
+  InGame,
+  Paused,
+}
+
+fn spawn_menu() {
+  // Spawn a menu
+}
+
+fn play_game() {
+  // Play the game
+}
+
+fn main() {
+  App::new()
+    // Add our state to our app definition
+    .init_state::&lt;AppState&gt;()
+    // We can add systems to trigger during transitions
+    .add_systems(OnEnter(AppState::MainMenu), spawn_menu)
+    // Or we can use run conditions
+    .add_systems(Update, play_game.run_if(in_state(AppState::InGame)))
+    .run();
+}</code></pre>
+<p>调用<code>App::init_state&lt;S&gt;</code>时：</p>
+<ol>
+<li><strong>Bevy</strong>将为应用程序添加<code>State&lt;S&gt;</code>和<code>NextState&lt;S&gt;</code>资源。</li>
+<li>它还将添加状态转换系统。</li>
+</ol>
+<p>在<code>0.14</code>之前，<code>next state</code>是一个包含<code>Option&lt;S&gt;</code>的结构体，但后来被更改了，因此你的<code>NextState&lt;S&gt;</code>是一个可以处于以下两种状态之一的枚举：</p>
+<ol>
+<li><code>NextState::Pending(s)</code>：下一个状态已触发，将转换。</li>
+<li><code>NextState::Unchanged</code>：尚未触发下一个状态</li>
+</ol>
+<p>我们通过在任意系统中调用<code>NextState::set(S)</code>从一种状态转换到另一种状态。</p>
+<p>当我们调用<code>App::init_state</code>时<strong>Bevy</strong>会自动添加一个系统<code>apply_state_transition&lt;S&gt;</code>，它在应用程序的<code>PreUpdate</code>阶段运行。</p>
+<p>此系统触发<code>OnExit(PreviousState)</code>和<code>OnEnter(YourState)</code>计划一次，然后最终过渡到下一个状态（如果已设置且当前为<code>NextState::Pending(S)</code>）。</p>
+<p>我们无法转换回我们所处的相同状态。因此，如果您不小心将<code>NextState</code>设置为当前状态，则不会发生任何事情。</p>
+<p>如果我们想创建显式<code>transition</code>，我们可以在<code>state</code>上实现<code>logic</code>：</p>
+<pre><code class="language-rust">impl AppState {
+  fn next(&amp;self) -&gt; Self {
+    match *self {
+      AppState::MainMenu =&gt; AppState::InGame,
+      AppState::InGame =&gt; AppState::Paused,
+      AppState::Paused =&gt; AppState::InGame,
+    }
+  }
+}</code></pre>
+<h3 id="changing-app-states"><a class="header" href="#changing-app-states">Changing app states</a></h3>
+<p>更改应用程序的状态将更改运行每个时钟周期的<code>Schedule</code>。</p>
+<p>当您转换到新的应用程序状态时，将在转换到<code>Schedule</code>状态之前运行<code>OnExit(State)</code>和<code>OnEnter(State)</code>计划。</p>
+<p>我们可以通过使用系统内的<code>NextState</code>资源来触发这些更改：</p>
+<pre><code class="language-rust">fn pause_game(
+  mut next_state: ResMut&lt;NextState&lt;AppState&gt;&gt;,
+  current_state: Res&lt;State&lt;AppState&gt;&gt;,
+  input: Res&lt;ButtonInput&lt;KeyCode&gt;&gt;,
+) {
+  if input.just_pressed(KeyCode::Escape) {
+    next_state.set(AppState::MainMenu);
+  }
+}</code></pre>
+<h2 id="sub-apps"><a class="header" href="#sub-apps">Sub-apps</a></h2>
+<p>应用程序可以添加<code>SubApp</code>：</p>
+<pre><code class="language-rust">#[derive(AppLabel, Clone, Copy, Hash, PartialEq, Eq, Debug)]
+struct MySubApp;
+
+let mut app = App::new();
+app.insert_sub_app(MySubApp, SubApp::new());</code></pre>
+<p>每个<code>SubApp</code>都包含自己的<code>Schedule</code>和<code>World</code>，它们与主<code>App</code>分开。</p>
+<p>它们可以用于将游戏的逻辑分离为独立的单元。</p>
+<p>假设我们正在制作一个游戏，其中有单独的游戏块，我们希望完全单独处理，然后与主游戏世界同步。</p>
+<p>首先，我们可以定义某种 “块”，这些块具有我们想要控制的特定状态，例如更改它们的颜色：</p>
+<pre><code class="language-rust">#[derive(Default, Clone, Debug)]
+enum ChunkState {
+  Red,
+  Green,
+  #[default]
+  Blue,
+}
+
+#[derive(Resource, Default, Clone)]
+struct Chunk {
+  id: u32,
+  state: ChunkState,
+}
+
+#[derive(Resource)]
+struct Chunks(HashMap&lt;u32, Chunk&gt;);</code></pre>
+<p>然后我们可以创建一个插件，在我们的主应用程序上创建并插入一个子应用程序。这个子应用程序将在我们的主应用程序之后连续运行，而不是并行运行。</p>
+<pre><code class="language-rust">#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, AppLabel)]
+pub struct ChunkApp;
+
+fn update_chunks(mut chunks: ResMut&lt;Chunks&gt;) {
+  for chunk in chunks.0.values_mut() {
+    match chunk.state {
+      ChunkState::Red =&gt; chunk.state = ChunkState::Green,
+      ChunkState::Green =&gt; chunk.state = ChunkState::Blue,
+      ChunkState::Blue =&gt; chunk.state = ChunkState::Red,
+    }
+  }
+}
+
+struct ChunksPlugin;
+
+impl Plugin for ChunksPlugin {
+  fn build(&amp;self, app: &amp;mut App) {
+    let mut sub_app = SubApp::new();
+
+    // Set up our sub app
+    sub_app
+      .insert_resource(Chunk::default())
+      .add_systems(Update, update_chunks);
+
+    // Set up how we will extract data from our main world -&gt; sub world
+    sub_app.set_extract(|main_world, sub_world| {
+      let mut chunks = main_world.resource_mut::&lt;Chunks&gt;();
+      let chunk = sub_world.resource::&lt;Chunk&gt;();
+      chunks.0.insert(chunk.id, chunk.clone());
+    });
+
+    // Add our sub app to our main app
+    app.insert_sub_app(ChunkApp, sub_app);
+  }
+}</code></pre>
+<p>有关更多性能问题的更完整示例，您可以查看<code>bevy/crates/bevy_render</code>中使用<code>async</code>的<code>pipelined_rendering.rs</code>。</p>
+<h2 id="multithreading"><a class="header" href="#multithreading">Multithreading</a></h2>
+<p>默认情况下，应用程序将在多个线程上运行。<code>Scheduler</code>正在努力尝试在系统具有不相交的查询集时并行运行系统。</p>
+<p>我们可以通过更改<code>TaskPoolPlugin</code>的<code>ThreadPoolOptions</code>来配置此行为：</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins.set(TaskPoolPlugin {
+      task_pool_options: TaskPoolOptions::with_num_threads(4),
+    }))
+    .run();
+}</code></pre>
+<h2 id="running-headless-apps"><a class="header" href="#running-headless-apps">Running headless apps</a></h2>
+<p>如果您想在不生成窗口或使用任何渲染系统的情况下运行您的应用程序，并且使用最少的资源，我们可以使用<code>MinimalPlugins</code>而不是我们通常添加的<code>DefaultPlugins</code>。</p>
+<p>这对于编写和运行包含游戏中的各种插件但不需要在屏幕上显示的测试非常有用。</p>
+<p>相反，如果您希望大多数其他系统像<strong>Bevy</strong>的资产、场景等一样运行，但不渲染到您的屏幕，则可以配置<code>DefaultPlugins</code>来执行此操作：</p>
+<pre><code class="language-rust">use bevy::prelude::*;
+use bevy::render::{
+  settings::{RenderCreation, WgpuSettings},
+  RenderPlugin,
+};
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins.set(RenderPlugin {
+      synchronous_pipeline_compilation: true,
+      render_creation: RenderCreation::Automatic(WgpuSettings {
+        backends: None,
+        ..default()
+      }),
+    }))
+    .run();
+}</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="系统"><a class="header" href="#系统">系统</a></h1>
 <p>系统是 Bevy 的功能模块。它们使用函数（<code>fn</code>）和闭包（<code>FnMut</code>）实现。这就是你实现所有游戏逻辑的方式。系统只能接受特殊参数类型，以指定你需要访问的数据。</p>
 <p>特殊参数类型包括：</p>
@@ -771,7 +1127,7 @@ fn my_player_or_player_level(levels: Query&lt;&amp;Level, Or&lt;(With&lt;MyPlaye
 }</code></pre>
 <h2 id="扩展-commands-api"><a class="header" href="#扩展-commands-api">扩展 Commands API</a></h2>
 <p>如果你想要更集成的东西，就像 Bevy 的 Commands API 一样。你可以创建自定义类型并实现 Command Trait ：</p>
-<pre><code class="language-Rust">struct AddEnemyCommand {
+<pre><code class="language-rust">struct AddEnemyCommand {
     level: u32,
     health: u32,
 }
@@ -791,8 +1147,7 @@ fn use_add_enemy_command(mut commands: Commands) {
         level: 5,
         health: 28,
     });
-}
-</code></pre>
+}</code></pre>
 <p>如果你想让他更加好用，你可以创建一个扩展 Trait 来向 Commands 添加额外的方法：</p>
 <pre><code class="language-rust">trait AddEnemyCommandExt {
     fn add_enemy(&amp;mut self, level: u32, health: u32);
@@ -1657,7 +2012,7 @@ impl PluginGroup for MyPluginGroup {
     .run();</code></pre>
 <p>请注意，这只是禁用了功能，但实际上无法删除代码以避免二进制膨胀。禁用的插件仍然必须编译到程序中。</p>
 <p>如果你想减少构建的体积，应该考虑禁用 Bevy 的默认 cargo features，或者单独依赖各种 Bevy 子 crate。</p>
-<h2 id="插件配置"><a class="header" href="#插件配置">插件配置</a></h2>
+<h2 id="插件配置-1"><a class="header" href="#插件配置-1">插件配置</a></h2>
 <p>插件也是存储在初始化/启动期间使用的设置的方便位置。对于可以在运行时更改的设置，建议将它们放在资源中。</p>
 <pre><code class="language-rust">App::new()
   .insert_resource(ClearColor(Color::BLACK))

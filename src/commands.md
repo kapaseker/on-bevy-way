@@ -50,7 +50,7 @@ fn custom_commands_spawn_player(mut commands: Commands) {
 
 ## 扩展 Commands API
 如果你想要更集成的东西，就像 Bevy 的 Commands API 一样。你可以创建自定义类型并实现 Command Trait ：
-```Rust 
+```rust 
 struct AddEnemyCommand {
     level: u32,
     health: u32,

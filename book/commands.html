@@ -211,7 +211,7 @@
 }</code></pre>
 <h2 id="扩展-commands-api"><a class="header" href="#扩展-commands-api">扩展 Commands API</a></h2>
 <p>如果你想要更集成的东西，就像 Bevy 的 Commands API 一样。你可以创建自定义类型并实现 Command Trait ：</p>
-<pre><code class="language-Rust">struct AddEnemyCommand {
+<pre><code class="language-rust">struct AddEnemyCommand {
     level: u32,
     health: u32,
 }
@@ -231,8 +231,7 @@ fn use_add_enemy_command(mut commands: Commands) {
         level: 5,
         health: 28,
     });
-}
-</code></pre>
+}</code></pre>
 <p>如果你想让他更加好用，你可以创建一个扩展 Trait 来向 Commands 添加额外的方法：</p>
 <pre><code class="language-rust">trait AddEnemyCommandExt {
     fn add_enemy(&amp;mut self, level: u32, health: u32);
