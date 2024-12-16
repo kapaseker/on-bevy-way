@@ -1,8 +1,8 @@
 # Summary
 
+- [应用](./app.md)
 - [数据类型](./data.md)
 - [行为](./behaviors.md)
-- [应用](./app.md)
 - [系统](./system.md)
 - [资源](./resource.md)
 - [实体](./entities.md)
