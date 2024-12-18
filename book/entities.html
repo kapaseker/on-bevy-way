@@ -173,68 +173,118 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="实体"><a class="header" href="#实体">实体</a></h1>
-<p>从概念上来讲，实体表示由不同组件组成的一组值。</p>
-<p>从技术上来讲，实体只是一个简单的整数 ID （想象一下表格中的行号），可以用来查找相关的数据值。</p>
-<p>在 Bevy 中，<code>Entity</code> 就是这个 ID ，<code>Entity</code> 由 <code>index</code> 和 <code>generation</code>组成，在实体被删除后，<code>Entity</code>可以重复利用。</p>
-<pre><code class="language-rust">struct Entity {
-  index: u32, // 索引
-  generation: NonZeroU32, // 记录被使用的次数
+                        <h1 id="entities"><a class="header" href="#entities">Entities</a></h1>
+<p>概括地说，<code>Entity</code>独占拥有零个或多个<code>Component</code>实例。</p>
+<p>每个实体只能具有每种类型的单个组件。可以在实体的生命周期内动态添加或删除这些类型。</p>
+<p>实体是表示其相关组件的索引的标识符。</p>
+<h2 id="entities-are-identifiers-实体是标识符"><a class="header" href="#entities-are-identifiers-实体是标识符">Entities are identifiers 实体是标识符</a></h2>
+<p><code>Entity</code>类型是一个轻量级标识符，仅对其来源的世界有效。</p>
+<pre><code class="language-rust">// https://github.com/bevyengine/bevy/blob/main/crates/bevy_ecs/src/entity/mod.rs
+#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
+pub struct Entity {
+  generation: u32,
+  index: u32,
 }</code></pre>
-<p>你可以使用<code>Commands</code>和<code>&amp;mut World</code>来创建和删除实体。</p>
-<pre><code class="language-rust">fn spawn_player(mut commands: Commands) {
-  let entity = commands.spawn((
-    Player,
-    Level(5),
-  )).id();
+<p>类型本身是<code>index</code>和<code>generation</code>属性的简单持有者。</p>
+<p>两者形成一个代际索引。这允许在数组中删除数据后快速插入，同时保持连续的内存布局，从而提高 ECS 的性能。</p>
+<h2 id="entities-are-local-to-the-world-实体是世界的本地实体"><a class="header" href="#entities-are-local-to-the-world-实体是世界的本地实体">Entities are local to the world 实体是世界的本地实体</a></h2>
+<p>每个<code>World</code>都保留一个Entities列表，其中包含3组实体ID：</p>
+<ol>
+<li><code>freelist</code>：以前释放的<strong>ID</strong></li>
+<li><code>reserved</code>：曾经在空闲列表中但被保留的<strong>ID</strong>列表</li>
+<li><code>pending</code>：尚不存在的新<strong>ID</strong>的计数</li>
+</ol>
+<p>分代索引可确保同时存在的两个实体永远不会共享同一索引。</p>
+<p>每次取消具有给定索引的实体时，代数都会增加。这用作给定索引被重用的次数的 “计数”。</p>
+<p>这些唯一标识符使<strong>Bevy</strong>能够以懒惰的方式分配它们。它首先保留一个<strong>ID</strong>，然后可以稍后分配它。</p>
+<p>此测试说明了以下概念：</p>
+<pre><code class="language-rust">#[cfg(test)]
+mod tests {
+  #[derive(Component)]
+  struct Health(i32);
 
-  commands.entity(entity).despawn();
-}
+  #[test]
+  fn reserve_and_spawn() {
+    let mut world = World::default();
+    // We reserve an entity id
+    let id = world.entities().reserve_entity();
 
-fn spawn_enemy(world: &amp;mut World) {
-  let entity = world.spawn((
-    Enemy,
-    Level(7),
-  )).id();
+    // Then we lazily spawn the entity using
+    // the reserved id
+    world.flush();
 
-  world.despawn(entity);
+    let mut entity = world.entity_mut(id);
+    entity.insert(Health(0));
+    assert_eq!(
+      entity.get::&lt;Health&gt;().unwrap(),
+      &amp;Health(0)
+    );
+  }
 }</code></pre>
-<p>一个功能会有一组必要组件，只能增加不能减少，这时应该使用 Bundle 将这组组件捆绑到一起。Bevy 内置了很多的 Bundle 来提供这些功能。例如：<code>SpriteBundle / MaterialMesh2dBundle / MaterialMeshBundle / PbrBundle / Camera2dBundle / Camera3dBundle / DirectionalLightBundle</code> 等等。</p>
-<pre><code class="language-rust">#[derive(Bundle)]
-struct PlayerBundle {
-  player: Player,
-  level: Level,
-  health: Health,
-}
-
-commands.spawn((
-  PlayerBundle {
-    player: Player,
-    level: Level(10),
-    health: Health(500.35),
-  },
-  MyPlayer,
-));</code></pre>
-<h2 id="组件"><a class="header" href="#组件">组件</a></h2>
-<p>组件是与实体相关联的数据。</p>
-<p>要创建一个新的组件类型，只需要定义一个 Rust 结构体或枚举，并实现 <code>Component</code> Trait。</p>
-<pre><code class="language-rust">#[derive(Component)]
-struct Level(u32);</code></pre>
-<h2 id="newtype-组件"><a class="header" href="#newtype-组件">Newtype 组件</a></h2>
-<p>使用包装将不是组件的类型变成组件，之所以不直接在原类型上实现 <code>Component</code> Trait 是因为孤儿原则。</p>
-<pre><code class="language-rust">#[derive(Component)]
-struct Level(u32);</code></pre>
-<h2 id="标记组件"><a class="header" href="#标记组件">标记组件</a></h2>
-<p>你可以使用空结构体来帮助你标记实体，这些被称为标记组件，在查询/过滤时很有用。</p>
-<pre><code class="language-rust">#[derive(Component)]
-struct Player;
-
-fn despawn_my_players(mut commands: Commands, my_players: Query&lt;Entity, With&lt;MyPlayer&gt;&gt;) {
-    for entity in &amp;my_players {
-        info!("player entity: {entity}");
-        commands.entity(entity).despawn();
-    }
+<p>在实际应用程序中，我们实际上并不自己管理任何这些。我们改用<code>commands</code>系统参数：</p>
+<pre><code class="language-rust">fn spawn_health(
+  mut commands: Commands
+) {
+  commands.spawn(Health(0));
 }</code></pre>
+<h2 id="entities-are-stored-in-tables-实体存储在表中"><a class="header" href="#entities-are-stored-in-tables-实体存储在表中">Entities are stored in tables 实体存储在表中</a></h2>
+<p><code>Entities</code>是<code>World</code>持有的一种类型，用于<code>World</code>中所有实体的元数据。每条元数据都包含：</p>
+<ol>
+<li>每个实体的生成。</li>
+<li>特定实体的活动/死亡状态。</li>
+<li>实体组件在内存中的位置（<code>EntityLocation</code>）。</li>
+</ol>
+<p><code>EntityLocation</code>包含有关存储实体组件的<code>Table</code>的信息。</p>
+<p>每个<code>Table</code>对于其存储的每种组件类型都有一个<code>Column</code>：</p>
+<pre><code class="language-rust">// https://github.com/bevyengine/bevy/blob/main/crates/bevy_ecs/src/storage/table/mod.rs
+pub struct Table {
+  columns: ImmutableSparseSet&lt;ComponentId, ThinColumn&gt;,
+  entities: Vec&lt;Entity&gt;,
+}</code></pre>
+<p><code>ImmutableSparseSet</code>可以理解为一个简单的<code>HashMap</code>，而<code>Column</code>则是一个类型擦除的<code>Vec&lt;T: Component&gt;</code>。</p>
+<p>为了从表中获取行，我们使用<code>Entity</code>作为每个<code>Column</code>的索引。</p>
+<p>因此，如果我们有一个包含3列的表：</p>
+<pre><code>Health column: [_, _, 50]
+Player column: [_, _, X]
+Enemy column:  [_, _, _]
+</code></pre>
+<p>我们可以获取ID为<code>2</code>的实体的组件，如下所示：</p>
+<pre><code>Health(50)
+Player
+</code></pre>
+<p>这是一个简化的说明。<strong>Bevy</strong>实际上会创建一个代表此ID的类型<code>TableRow</code>，我们可以使用<code>Entity</code>标识符来获取<code>TableRow</code>。</p>
+<h2 id="entities-enable-structure-of-arrays-实体启用数组结构"><a class="header" href="#entities-enable-structure-of-arrays-实体启用数组结构">Entities enable structure of arrays 实体启用数组结构</a></h2>
+<p>这种存储概念称为<strong>数组结构</strong>（<em>SoA</em>），而不是<strong>结构数组</strong>（<em>AoS</em>）。</p>
+<p>在<strong>AoS</strong>程序中，我们可以想象一个更传统的面向对象的游戏引擎，如<strong>Godot</strong>。我们的结构容纳了我们的所有组件。因此，一个对象具有许多属性，每个属性都是一个组件：</p>
+<pre><code class="language-rust">struct Player {
+  health: u32,
+  speed: u32,
+  name: String,
+  team: u32
+}</code></pre>
+<p>我们可以考虑我们的游戏循环迭代每个玩家并执行其所需的逻辑：</p>
+<pre><code class="language-rust">fn movement_system(mut players: Query&lt;&amp;mut Player&gt;) {}
+fn attacking_system(mut players: Query&lt;&amp;mut Player&gt;) {}</code></pre>
+<p>一个问题是我们不能再拆分这些可变引用。每个对玩家做任何事情的系统都必须等待轮到执行。像这样的神物越集中，问题就越困难。</p>
+<p>每个查询还需要更多内存，一个系统可能只使用名​​称，但加载其所有其余组件仍然相同。</p>
+<p>相反，在<strong>Bevy</strong>中我们使用数组结构来做同样的事情：</p>
+<pre><code class="language-rust">struct Player;
+struct Health(u32);
+struct Name(String);
+struct TeamId(u32);</code></pre>
+<p>当我们想要创建一个在某些情况下减少我们健康的系统时，我们不需要可变地借用其他组件。</p>
+<p>如果系统不需要对相同数据进行可变访问，<strong>Bevy</strong>将努力尝试安排您的系统并行运行。</p>
+<h2 id="archetypes-group-components-by-entities-原型按实体对组件进行分组"><a class="header" href="#archetypes-group-components-by-entities-原型按实体对组件进行分组">Archetypes group components by entities 原型按实体对组件进行分组</a></h2>
+<p>那么实体的组件进入哪个<code>Table</code>？这就是<code>Archetype</code>的用武之地。</p>
+<p>每个组件都有一个基于其实体所具有的组件组合的<code>ArchetypeId</code>。</p>
+<p>对于实体上每个独特的组件组合，世界只有一个<code>Archetype</code>。它们的<code>ArchetypeId</code>对于世界而言是本地唯一的，而不是世界之间的全局唯一的。</p>
+<p>原型指向特定的表，但多个原型可以将它们的表组件存储在同一个表中。</p>
+<p><code>Archetype</code>和<code>Table</code>都已创建，但从未清理。它们不会被移除并持续存在，直到世界被抛弃。</p>
+<p>原型在调度程序使用时非常有用：</p>
+<pre><code class="language-rust">fn system_a(query: Query&lt;&amp;mut Health, With&lt;Player&gt;&gt;) {}
+fn system_b(query: Query&lt;&amp;mut Health, Without&lt;Player&gt;&gt;) {}</code></pre>
+<p><code>system_b</code>将与<code>system_a</code>并行，即使两者使用对同一组件类型的可变引用。</p>
+<p>尽管两个组件共享相同的<code>ComponentId</code>，但它们实际上具有不同的<code>ArchetypeComponentId</code>，这让调度程序可以识别这些不相交的查询。</p>
 
                     </main>
 

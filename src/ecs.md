@@ -202,6 +202,8 @@ Positions: [Position1, Position2, Position3]
 
 游戏中的每个事物都是一个实体，具有零个或多个充当列的组件。  
 
+[Read More About Entities](./entities.md)
+
 ### Components 组件  
 
 组件就是列。它们与特定的`Entity`相关联。  
