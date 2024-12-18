@@ -1,4 +1,4 @@
-# ECS
+# ECS 实体、组件、系统
 
 ECS 是“Entity Component System”的首字母缩写词，是一种编程范式（类似于 Model View Controller），**Bevy**针对存储和数据访问做了最大性能优化。
 
@@ -16,7 +16,7 @@ ECS 是“Entity Component System”的首字母缩写词，是一种编程范�
 
 那么为什么要费心呢？性能。
 
-## 从CPU中榨取性能
+## Squeezing performance out of our CPU 从CPU中榨取性能
 
 为了提高计算机的速度，我们需要小心将数据存储在内存中的方式。如果我们能让**CPU**从缓存中为我们提供数据，而不是从**RAM**中获取数据，那么我们的**CPU**将会更加高性能，因为**RAM**要昂贵得多。  
 
@@ -83,7 +83,7 @@ fn main() {
 这种方法非常简洁易读，但其性能受到了影响。
 
 
-## 高效的内存布局
+## Efficient memory layout 高效的内存布局
 
 上面示例中的内存布局目前如下所示：
 
@@ -162,7 +162,7 @@ Positions: [Position1, Position2, Position3]
 
 我们通过按顺序访问每个组件来将每个组件加载到堆栈上，从而最大限度地提高缓存的效率。
 
-## 实体帮助我们避免传递对数据的引用
+## Entities help us avoid passing references to our data 实体帮助我们避免传递对数据的引用
 
 好的，通过使用**ECS**的实体和组件部分，我们可以获得更好的内存性能。但还有一个想法，我们如何管理我们的引用和指针？  
 
@@ -174,7 +174,7 @@ Positions: [Position1, Position2, Position3]
 
 通过在系统中本地化我们的内存访问，我们可以彼此并行地执行数据脱节的查询，从而获得更多的性能提升。  
 
-## 原型有助于组件组合在内存中保持在一起
+## Archetypes help combinations of components stay together in memory 原型有助于组件组合在内存中保持在一起
 
 我们的系统通常根据实体拥有的组件组来迭代实体。但是，这些数组可以分散在不同的数组或数组的结构中。  
 
@@ -190,7 +190,7 @@ Positions: [Position1, Position2, Position3]
 
 这就解释了为什么**Bevy**选择使用原型**ECS**作为其框架的核心。让我们看看它在**Bevy**中具体是如何工作的。  
 
-## Bevy中的ECS
+## ECS with Bevy Bevy中的ECS
 
 **Bevy**是一个使用**Rust**构建的原型**ECS**。它使用实体（**Entities**）、组件（**Components**）和系统（**Systems**）的组合来构建游戏逻辑，其方式比其他编程范例更可表达且性能更高。  
 
@@ -271,7 +271,7 @@ fn main() {
 
 原型和捆绑形成一个图表。添加或删除捆绑包会将`Entity`移动到新的`Archetype`。 `Edges`用于缓存这些移动的结果。  
 
-### Resources资源  
+### Resources 资源  
 
 没有对应的`Entity`的单例`Component`。
 

@@ -1,4 +1,4 @@
-# App
+# App 应用
 
 `App`控制游戏的主循环，让`system`可以更新`world`。   
 
@@ -13,7 +13,7 @@
 使用`run`函数推进计划将调用`system`，该`system`将操作我们`World`中的数据。
 
 
-## 定义App
+## Defining an app 定义App
 
 我们在`main.rs`中定义我们的`App`，该应用程序将在编译后运行二进制文件时执行。  
 
@@ -34,7 +34,7 @@ fn hello_world_system() {
 
 `DefaultPlugins`添加了核心插件，这些插件允许您的游戏在操作系统提供的窗口上渲染。除非您尝试在 Headless 模式（没有任何图形）下运行，或者有充分的理由这样做，否则我们始终将其包含在我们的`App`定义中。
 
-## Plugins 
+## Plugins 插件
 
 **Bevy**使用一种将游戏组织成为单个功能的架构，叫插件。
 
@@ -95,7 +95,7 @@ fn main() {
 
 通常，保持`main.rs`文件非常干净并将核心逻辑移出到像`GamePlugin`这样的插件中很方便，它可以进一步调用运行游戏核心部分所需的其他插件。
 
-## 插件配置
+## Plugin configuration 插件配置
 
 我们可以为`Plugin`提供选项来配置我们的插件：  
 
@@ -146,7 +146,7 @@ fn main() {
 }
 ```
 
-## Running apps
+## Running app 运行应用
 
 当我们运行一个`App`时，我们调用它的`App Runner`函数。  
 
@@ -206,7 +206,7 @@ fn main() {
 
 从`0.14`开始，运行程序必须返回`AppExit::Success`。  
 
-## Schedules 
+## Schedules 调度
 
 `Schedule`是集合元数据、系统和负责运行它们的执行程序。App将执行每个`Schedule`的`Schedule::run`。`Schedule::run`会传递`world`以便我们进行修改。  
 
@@ -301,14 +301,14 @@ mod tests {
 
 这里没有简单的解决方案，因此我们一直将固定系统单元测试添加到`Update`计划中，以使其更易于控制。  
 
-## App States
+## App States 应用程序状态
 
 `App`始终处于某个`AppState`。此状态决定了运行哪个`Schedule`。  
 
 因此，你的`App`就像一个有限状态机，你的游戏逻辑触发了状态上的迁移。  
 
 
-### createing app state
+### createing app state 创建状态
 
 **Bevy**中的`States`是实现`States trait`的任何枚举或结构体。  
 
@@ -374,7 +374,7 @@ impl AppState {
 }
 ```
 
-### Changing app states
+### Changing app states 改变状态
 
 更改应用程序的状态将更改运行每个时钟周期的`Schedule`。 
 
@@ -395,7 +395,7 @@ fn pause_game(
 ```
 
 
-## Sub-apps
+## Sub-apps 子应用
 
 应用程序可以添加`SubApp`：  
 
@@ -476,7 +476,7 @@ impl Plugin for ChunksPlugin {
 
 有关更多性能问题的更完整示例，您可以查看`bevy/crates/bevy_render`中使用`async`的`pipelined_rendering.rs`。  
 
-## Multithreading
+## Multithreading 多线程
 
 默认情况下，应用程序将在多个线程上运行。`Scheduler`正在努力尝试在系统具有不相交的查询集时并行运行系统。  
 
@@ -492,7 +492,7 @@ fn main() {
 }
 ```
 
-## Running headless apps
+## Running headless app 运行无头应用
 
 如果您想在不生成窗口或使用任何渲染系统的情况下运行您的应用程序，并且使用最少的资源，我们可以使用`MinimalPlugins`而不是我们通常添加的`DefaultPlugins`。  
 

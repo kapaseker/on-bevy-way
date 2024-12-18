@@ -1,4 +1,4 @@
-# Entities
+# Entities 实体
 
 概括地说，`Entity`独占拥有零个或多个`Component`实例。  
 

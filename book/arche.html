@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>原型 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">1.</strong> 应用</a></li><li class="chapter-item expanded "><a href="arche.html" class="active"><strong aria-hidden="true">2.</strong> 原型</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">3.</strong> ECS</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">4.</strong> 实体</a></li><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">5.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">6.</strong> 行为</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">7.</strong> 系统</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">8.</strong> 资源</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">9.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">10.</strong> 查询</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">11.</strong> 命令</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">12.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">13.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">14.</strong> 时间</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">15.</strong> 摄像机</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">16.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">17.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">18.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">19.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="play_sound.html"><strong aria-hidden="true">20.</strong> 播放音频</a></li><li class="chapter-item expanded "><a href="event.html"><strong aria-hidden="true">21.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">22.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">23.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html"><strong aria-hidden="true">24.</strong> 状态</a></li><li class="chapter-item expanded "><a href="plugin.html"><strong aria-hidden="true">25.</strong> 插件</a></li><li class="chapter-item expanded "><a href="change_detection.html"><strong aria-hidden="true">26.</strong> 变化检测</a></li><li class="chapter-item expanded "><a href="parent_child.html"><strong aria-hidden="true">27.</strong> 父子组件</a></li><li class="chapter-item expanded "><a href="visibility.html"><strong aria-hidden="true">28.</strong> 可见性</a></li><li class="chapter-item expanded "><a href="assets_state.html"><strong aria-hidden="true">29.</strong> 资产的状态和数据</a></li><li class="chapter-item expanded "><a href="hdr.html"><strong aria-hidden="true">30.</strong> HDR和色调映射</a></li><li class="chapter-item expanded "><a href="bloom.html"><strong aria-hidden="true">31.</strong> 辉光</a></li><li class="chapter-item expanded "><a href="ime.html"><strong aria-hidden="true">32.</strong> 输入法</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="archetypes-原型"><a class="header" href="#archetypes-原型">Archetypes 原型</a></h1>
+<p><strong>Bevy</strong>是一个典型的<strong>ECS</strong>。原型通过根据其组件组成对具有相似行为的实体进行分组，从而能够有效地存储和处理具有相似行为的实体。</p>
+<p><code>Archetype</code>是组件的唯一组合。<strong>Bevy</strong>将这些组合存储在<code>Table</code>上。</p>
+<p>通过将一起访问的组件放在同一个内存位置，我们可以帮助我们的内存访问更加高效。</p>
+<p>当查询用作系统参数时，<strong>Bevy</strong>会计算它请求的组件集的匹配<code>Archetype</code>。这让<strong>Bevy</strong>可以计算哪些系统可以并行运行（见下文）。</p>
+<p>当您将组件添加到实体时，您会将该实体移动到新的原型。</p>
+<p>一个世界对于每个独特的组件组合只有一个<code>Archetype</code>。</p>
+<p><code>Archetype</code>存储了一些关于自身的元数据：</p>
+<pre><code class="language-rust">// https://docs.rs/bevy/latest/bevy/ecs/archetype/struct.Archetype.html
+pub struct Archetype {
+  id: ArchetypeId,
+  table_id: TableId,
+  edges: Edges,
+  entities: Vec&lt;ArchetypeEntity&gt;,
+  components: ImmutableSparseSet&lt;ComponentId, ArchetypeComponentInfo&gt;,
+}</code></pre>
+<p><code>Archetypes</code>存储在一个特定的世界中，并且仅在该<code>World</code>本地唯一：</p>
+<pre><code class="language-rust">// https://docs.rs/bevy/latest/bevy/ecs/archetype/struct.Archetypes.html
+pub struct Archetypes {
+  pub(crate) archetypes: Vec&lt;Archetype&gt;,
+  archetype_component_count: usize,
+  by_components: bevy_utils::HashMap&lt;ArchetypeComponents, ArchetypeId&gt;
+}</code></pre>
+<h2 id="starting-without-archetypes-从原型开始"><a class="header" href="#starting-without-archetypes-从原型开始">Starting without archetypes 从原型开始</a></h2>
+<p>想象一下，我们有一个<strong>ECS</strong>的朴素实现，它将组件存储为数组，将实体存储为索引：</p>
+<div class="table-wrapper"><table><thead><tr><th>Entity ID</th><th>Health</th><th>Player</th><th>Position</th><th>Enemy</th></tr></thead><tbody>
+<tr><td>1</td><td>100</td><td>√</td><td>(3, 2)</td><td></td></tr>
+<tr><td>2</td><td>72</td><td></td><td>(3, 1)</td><td>√</td></tr>
+<tr><td>3</td><td>40</td><td>√</td><td>(4, 2)</td><td></td></tr>
+<tr><td>4</td><td>20</td><td></td><td>(3, 0)</td><td>√</td></tr>
+</tbody></table>
+</div>
+<p><code>Player</code>和<code>Enemy</code>中的差距对于我们的内存访问来说非常尴尬。如果我们想编写矢量化代码来处理这些数组，那么空值将带来一个严重的问题。</p>
+<p>“矢量化代码”是指一次对整个数组或数据向量进行操作的代码，而不是按顺序处理单个元素的代码。</p>
+<p>使用<strong>SIMD</strong>（单指令、多数据）指令等硬件优化，可以高效地执行矢量化操作。这些指令允许对多个数据元素同时执行相同的操作，通常可以提高性能。</p>
+<p>但是，在给定的场景中，由于实体 ID 与数组索引（我们的空白区域）不匹配，因此编写需要<code>Player</code>和<code>Enemy</code>数组的矢量化代码变得具有挑战性。</p>
+<p>矢量化操作通常依赖于不同数组中的相应元素具有相同的索引的假设。如果 A 和 B 中的实体 ID 未与数组索引对齐，则很难执行依赖于两个数组之间匹配元素的操作。</p>
+<h2 id="improving-the-layout-of-our-components-改进组件的布局"><a class="header" href="#improving-the-layout-of-our-components-改进组件的布局">Improving the layout of our components 改进组件的布局</a></h2>
+<p>如果我们以可能使用的方式存储组件会怎样？</p>
+<div class="table-wrapper"><table><thead><tr><th>Entity ID</th><th>Health</th><th>Player</th><th>Position</th><th>Enemy</th></tr></thead><tbody>
+<tr><td>1</td><td>100</td><td>√</td><td>(3, 2)</td><td></td></tr>
+<tr><td>3</td><td>40</td><td>√</td><td>(4, 2)</td><td></td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>Entity ID</th><th>Health</th><th>Player</th><th>Position</th><th>Enemy</th></tr></thead><tbody>
+<tr><td>2</td><td>72</td><td></td><td>(3, 1)</td><td>√</td></tr>
+<tr><td>4</td><td>20</td><td></td><td>(3, 0)</td><td>√</td></tr>
+</tbody></table>
+</div>
+<p>现在我们有两个表，但每个表都形成一个连续的元素数组，这些元素可以在检索时进行优化。</p>
+<p>这两个表都有不同的<code>Archetype</code>。一种用于<code>Player</code>，另一种用于<code>Enemy</code>。</p>
+<p>因此，我们将组件存储在相同类型的数组中，但位于表示实体的 type （如其所有组件的总和）的不同表中。我们将这种“类型”称为<code>Archetype</code>。</p>
+<h2 id="archetypes-help-find-disjointed-queries-原型有助于找到交叉的查询"><a class="header" href="#archetypes-help-find-disjointed-queries-原型有助于找到交叉的查询">Archetypes help find disjointed queries 原型有助于找到交叉的查询</a></h2>
+<p>一个<code>Component</code>可以出现在许多<code>Archetype</code>中。这是通过使用<code>ArchetypeComponentId</code>来完成的，这种多对多关系是并行调度程序如何计算出可以同时运行的脱节只读查询的方式。</p>
+<p>乍一看，您可能会认为这不应该能够并行运行：</p>
+<pre><code class="language-rust">fn move_players(
+  player_positions: Query&lt;&amp;mut Position, With&lt;Player&gt;&gt;,
+) {
+  // ...
+}
+
+fn move_enemies(
+  enemy_positions: Query&lt;&amp;mut Position, Without&lt;Player&gt;&gt;
+) {
+  // ...
+}</code></pre>
+<p>如果组件只是在巨大的<code>Vec&lt;T&gt;</code>上存储和访问，那么<code>player_positions</code>将已经借用了<code>Position</code> 组件和<code>enemy_positions</code>不应并行运行。</p>
+<p>但是，因为我们为每个<code>Archetype</code>提供一个表，所以即使两个查询都返回<code>&amp;mut Position</code>，它们也不会发生冲突并且可以并行运行。</p>
+<p>这是因为即使<code>Position</code>的<code>ComponentId</code>相同，它们的<code>ArchetypeComponentId</code>也会不同。</p>
+<p>换句话说，每个<code>Component</code>只有一个<code>ComponentId</code>，但可以有多个<code>ArchetypeComponentId</code>。它类似于<strong>SQL</strong>数据库中 <code>Component</code>和<code>Archetype</code>之间的多对多关系：</p>
+<pre><code>Component &lt;-- ComponentId &lt;-- ArchetypeComponentId --&gt; ArchetypeId --&gt; Archetype
+</code></pre>
+<h2 id="when-and-how-do-archetypes-get-updated-原型何时以及如何更新"><a class="header" href="#when-and-how-do-archetypes-get-updated-原型何时以及如何更新">When and how do archetypes get updated? 原型何时以及如何更新？</a></h2>
+<p>当我们生成或插入<code>Bundle</code>时，<code>Archetype</code>就会存在。</p>
+<p>给定存储在<code>Table</code>或<code>SparseSet</code>或两者的某种组合中的一组组件，<code>Bevy</code>将调用<code>Archetypes::get_id_or_insert</code>来分配或找到一个<code>TableId</code>，它将用于创建一个新的<code>Archetype</code>。</p>
+<p>当我们从<code>Entity</code>添加或删除捆绑包时，它会将其移动到新的<code>Archetype</code>表。</p>
+<p>这些移动可能非常昂贵，因此<strong>Bevy</strong>将这些移动缓存在<code>Edges</code>中。下次添加捆绑包时，我们可以获取匹配的边缘并找到目标 <code>Archetype</code>将其移动到，而无需从头开始计算。</p>
+<h2 id="how-does-bevy-know-our-archetypes-have-changed-bevy怎么知道我们的原型已经改变了"><a class="header" href="#how-does-bevy-know-our-archetypes-have-changed-bevy怎么知道我们的原型已经改变了">How does bevy know our archetypes have changed? Bevy怎么知道我们的原型已经改变了？</a></h2>
+<p>每次我们添加或删除组件时，<code>Archetypes</code>的<code>ArchetypeGeneration</code>都会发生变化。</p>
+<p><strong>Bevy</strong>使用当前原型的长度来创建分代索引，以保证在添加或删除原型时有唯一的索引。</p>
+<p>当我们必须更新原型索引时，我们使用这一代，以便当我们查询事物时它们位于它们应该在的位置。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="app.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="ecs.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="app.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="ecs.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
