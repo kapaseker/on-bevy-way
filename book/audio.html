@@ -1,0 +1,384 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>音频 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">1.</strong> 应用</a></li><li class="chapter-item expanded "><a href="arche.html"><strong aria-hidden="true">2.</strong> 原型</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">3.</strong> ECS</a></li><li class="chapter-item expanded "><a href="assets.html"><strong aria-hidden="true">4.</strong> 资产</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">5.</strong> 实体</a></li><li class="chapter-item expanded "><a href="audio.html" class="active"><strong aria-hidden="true">6.</strong> 音频</a></li><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">7.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">8.</strong> 行为</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">9.</strong> 系统</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">10.</strong> 资源</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">11.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">12.</strong> 查询</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">13.</strong> 命令</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">14.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">15.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">16.</strong> 时间</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">17.</strong> 摄像机</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">18.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">19.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">20.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">21.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="event.html"><strong aria-hidden="true">22.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">23.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">24.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html"><strong aria-hidden="true">25.</strong> 状态</a></li><li class="chapter-item expanded "><a href="plugin.html"><strong aria-hidden="true">26.</strong> 插件</a></li><li class="chapter-item expanded "><a href="change_detection.html"><strong aria-hidden="true">27.</strong> 变化检测</a></li><li class="chapter-item expanded "><a href="parent_child.html"><strong aria-hidden="true">28.</strong> 父子组件</a></li><li class="chapter-item expanded "><a href="visibility.html"><strong aria-hidden="true">29.</strong> 可见性</a></li><li class="chapter-item expanded "><a href="hdr.html"><strong aria-hidden="true">30.</strong> HDR和色调映射</a></li><li class="chapter-item expanded "><a href="bloom.html"><strong aria-hidden="true">31.</strong> 辉光</a></li><li class="chapter-item expanded "><a href="ime.html"><strong aria-hidden="true">32.</strong> 输入法</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="audio-音频"><a class="header" href="#audio-音频">Audio 音频</a></h1>
+<p><strong>Bevy</strong>的音频系统为您提供基础知识。您可以播放声音和控制音量，甚至可以在空间上。</p>
+<p>音频是通过实体组件系统完成的，方法是将某些组件添加到<code>AudioPlugin</code>用于播放声音的实体中。</p>
+<p><code>AudioSource</code>保存音频数据并连接到<code>AudioSink</code>，这通常通过生成<code>AudioBundle</code>来完成。</p>
+<h2 id="playing-audio-播放音频"><a class="header" href="#playing-audio-播放音频">Playing audio 播放音频</a></h2>
+<p>我们可以通过在任何实体上生成<code>AudioBundle</code>来触发声音播放。</p>
+<pre><code class="language-rust">fn play_background_audio(
+  asset_server: Res&lt;AssetServer&gt;,
+  mut commands: Commands
+) {
+  // Create an entity dedicated to playing our background music
+  commands.spawn(AudioBundle {
+    source: asset_server.load("background_audio.ogg"),
+    settings: PlaybackSettings::LOOP,
+  });
+}
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_systems(Startup, play_background_audio)
+    .run();
+}</code></pre>
+<p>加载资源后，音乐将开始循环播放，直到我们生成的这个实体消失或组件被移除。</p>
+<p>此音频的实际播放发生在<code>AudioPlugin</code>中添加的系统中。系统会将一个<code>AudioSink</code>添加到我们刚刚添加的<code>AudioBundle</code>中，它将控制播放。</p>
+<p>数据必须是<strong>Bevy</strong>支持的文件格式之一：</p>
+<ul>
+<li><code>wav</code></li>
+<li><code>ogg</code></li>
+<li><code>flac</code></li>
+<li><code>mp3</code></li>
+</ul>
+<p><strong>Bevy</strong>默认包含<code>ogg</code>，但对于其他音频格式，您需要在<code>Cargo.toml</code>中包含该功能：</p>
+<pre><code class="language-toml">[dependencies]
+bevy = { version = "0.14.2", features = ["mp3"] }
+</code></pre>
+<p>内置的播放设置：</p>
+<p><img src="https://i.imgur.com/ikswDzQ.png" alt="img" /></p>
+<h2 id="controlling-playback-控制播放"><a class="header" href="#controlling-playback-控制播放">Controlling playback 控制播放</a></h2>
+<p>为了控制<code>AudioBundle</code>的播放，我们可以使用<code>AudioPlugin</code>在生成实体时添加的<code>AudioSink</code>：</p>
+<pre><code class="language-rust">fn volume_system(
+  keyboard_input: Res&lt;ButtonInput&lt;KeyCode&gt;&gt;,
+  music_box_query: Query&lt;&amp;AudioSink, With&lt;MusicBox&gt;&gt;
+) {
+  if let Ok(sink) = music_box_query.get_single() {
+    if keyboard_input.just_pressed(KeyCode::Equal) {
+      sink.set_volume(sink.volume() + 0.1);
+    } else if keyboard_input.just_pressed(KeyCode::Minus) {
+      sink.set_volume(sink.volume() - 0.1);
+    }
+  }
+}
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_systems(Startup, play_background_audio)
+    .add_systems(Update, volume_system)
+    .run();
+}</code></pre>
+<p>音频接收器还可以<code>set_speed</code>和<code>toggle</code>来播放或停止音频。</p>
+<h2 id="spatial-audio-空间音频"><a class="header" href="#spatial-audio-空间音频">Spatial audio 空间音频</a></h2>
+<p>上面的示例将为我们提供给<code>bundle</code>的任何源播放平坦的未修改声音。</p>
+<p>要全局更改我们的空间音频设置，我们可以设置音频插件设置：</p>
+<pre><code class="language-rust">use bevy::audio::{SpatialScale, AudioPlugin};
+const AUDIO_SCALE: f32 = 1. / 100.;
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins.set(AudioPlugin {
+      default_spatial_scale: SpatialScale::new_2d(AUDIO_SCALE),
+      ..default()
+    }))
+    .run();
+}</code></pre>
+<p>然后，为了播放声音，我们可以添加一个带有<code>SpatialListener</code>组件的监听器，并将它们相对于发出声音的任何实体移动：</p>
+<pre><code class="language-rust">fn play_2d_spatial_audio(
+  mut commands: Commands,
+  asset_server: Res&lt;AssetServer&gt;
+) {
+  // Spawn our emitter
+  commands.spawn((
+    Player,
+    AudioBundle {
+      source: asset_server.load("flight_of_the_valkaries.ogg"),
+      settings: PlaybackSettings::LOOP
+    }
+  ));
+
+  // Spawn our listener
+  commands.spawn((
+    SpatialListener::new(100.), // Gap between the ears
+    SpatialBundle::default()
+  ));
+}</code></pre>
+<p>这将生成一个玩家实体，并从其位置发出声音。例如，周围的其他玩家可以根据他们离我们的距离多远来听到它。</p>
+<h2 id="volume-音量"><a class="header" href="#volume-音量">Volume 音量</a></h2>
+<p>我们的应用程序有两个独立的音量来源：</p>
+<ol>
+<li>Global volume 全局音量</li>
+<li>Audio sink volume 音频接收器音量</li>
+</ol>
+<p>要更改全局音量，我们修改<code>GlobalVolume</code>资源：</p>
+<pre><code class="language-rust">use bevy::audio::Volume;
+
+fn change_global_volume(
+  mut volume: ResMut&lt;GlobalVolume&gt;,
+) {
+  volume.volume = Volume::new(0.5);
+}
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .insert_resource(GlobalVolume::new(0.2))
+    .add_systems(Startup, change_global_volume)
+    .run();
+}</code></pre>
+<p>然后，对于各个音频接收器，我们可以使用系统内的公共接口来修改其各自的值：</p>
+<pre><code class="language-rust">fn volume_system(
+  keyboard_input: Res&lt;ButtonInput&lt;KeyCode&gt;&gt;,
+  music_box_query: Query&lt;&amp;AudioSink, With&lt;MusicBox&gt;&gt;
+) {
+  if let Ok(sink) = music_box_query.get_single() {
+    if keyboard_input.just_pressed(KeyCode::Equal) {
+      sink.set_volume(sink.volume() + 0.1);
+    } else if keyboard_input.just_pressed(KeyCode::Minus) {
+      sink.set_volume(sink.volume() - 0.1);
+    }
+  }
+}
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_systems(Update, volume_system)
+    .run();
+}</code></pre>
+<h2 id="internals-内部结构"><a class="header" href="#internals-内部结构">Internals 内部结构</a></h2>
+<p>在内部，<strong>Bevy</strong>使用<a href="https://docs.rs/rodio/latest/rodio/index.html">rodio</a>来解码这些源。</p>
+<p><code>AudioBundle</code>由<code>source</code>和一些控制播放的<code>settings</code>组成：</p>
+<pre><code class="language-rust">// https://github.com/bevyengine/bevy/blob/5c759a1be800209f537bea31d32b8ba7e966b0c1/crates/bevy_audio/src/audio.rs#L229
+pub type AudioBundle = AudioSourceBundle&lt;AudioSource&gt;;
+
+pub struct AudioSourceBundle&lt;Source = AudioSource&gt;
+where
+  Source: Asset + Decodable,
+{
+  // Asset containing the audio data to play.
+  pub source: Handle&lt;Source&gt;,
+  // Initial settings that the audio starts playing with.
+  // If you would like to control the audio while it is playing,
+  // query for the [`AudioSink`][crate::AudioSink] component.
+  // Changes to this component will *not* be applied to already-playing audio.
+  pub settings: PlaybackSettings,
+}</code></pre>
+<p><code>Decodable</code>特征允许<strong>Bevy</strong>将源文件转换为<code>rodio</code>兼容的<code>rodio::Source</code>类型。实现此特征的类型将保存原始声音数据，然后将其转换为样本迭代器。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="entities.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="data.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="entities.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="data.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>资产 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">1.</strong> 应用</a></li><li class="chapter-item expanded "><a href="arche.html"><strong aria-hidden="true">2.</strong> 原型</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">3.</strong> ECS</a></li><li class="chapter-item expanded "><a href="assets.html" class="active"><strong aria-hidden="true">4.</strong> 资产</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">5.</strong> 实体</a></li><li class="chapter-item expanded "><a href="audio.html"><strong aria-hidden="true">6.</strong> 音频</a></li><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">7.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">8.</strong> 行为</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">9.</strong> 系统</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">10.</strong> 资源</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">11.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">12.</strong> 查询</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">13.</strong> 命令</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">14.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">15.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">16.</strong> 时间</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">17.</strong> 摄像机</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">18.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">19.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">20.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">21.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="event.html"><strong aria-hidden="true">22.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">23.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">24.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html"><strong aria-hidden="true">25.</strong> 状态</a></li><li class="chapter-item expanded "><a href="plugin.html"><strong aria-hidden="true">26.</strong> 插件</a></li><li class="chapter-item expanded "><a href="change_detection.html"><strong aria-hidden="true">27.</strong> 变化检测</a></li><li class="chapter-item expanded "><a href="parent_child.html"><strong aria-hidden="true">28.</strong> 父子组件</a></li><li class="chapter-item expanded "><a href="visibility.html"><strong aria-hidden="true">29.</strong> 可见性</a></li><li class="chapter-item expanded "><a href="hdr.html"><strong aria-hidden="true">30.</strong> HDR和色调映射</a></li><li class="chapter-item expanded "><a href="bloom.html"><strong aria-hidden="true">31.</strong> 辉光</a></li><li class="chapter-item expanded "><a href="ime.html"><strong aria-hidden="true">32.</strong> 输入法</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="assets-资产"><a class="header" href="#assets-资产">Assets 资产</a></h1>
+<p>资产是需要加载到我们游戏中的资源，例如：</p>
+<ul>
+<li>纹理</li>
+<li>音频</li>
+<li><strong>3D</strong>模型</li>
+<li>其他媒体文件</li>
+</ul>
+<p>通常这些资源非常大，因此将它们全部加载到内存中会很慢且不可行。<strong>Bevy</strong>的资产系统努力使这种加载变得简单，并且能够异步完成。</p>
+<p>在<strong>Bevy</strong>中，资产通过两个关键资源进行管理：</p>
+<ul>
+<li><code>Assets&lt;T&gt;</code>，中存储每种类型的加载资产</li>
+<li><code>AssetServer</code>，用于异步从文件加载资源</li>
+</ul>
+<h2 id="adding-assets-添加资产"><a class="header" href="#adding-assets-添加资产">Adding assets 添加资产</a></h2>
+<p>要从文件系统添加资产，我们需要告诉<code>AssetServer</code>为我们<code>load</code>它们。改接口将返回加载资产的句柄。</p>
+<p>然后，我们将这些手柄附加到某种组件上，这些组件会将它们渲染到屏幕上。</p>
+<p>举个简单的例子，我们想从<a href="https://kenney.nl/assets/car-kit">Kenney.nl</a>添加一个<strong>3D</strong> 的 <strong>.glb</strong> 文件。</p>
+<p>我们首先将其添加到项目根目录中的<code>./assets/models</code>文件夹中。</p>
+<p>然后，我们可以使用<code>SceneBundle</code>将其加载到系统内：</p>
+<pre><code class="language-rust">#[derive(Component)]
+struct Car;
+
+fn spawn_ambulance(
+  mut commands: Commands,
+  asset_server: Res&lt;AssetServer&gt;
+) {
+  let model = asset_server.load("models/ambulance.glb#Scene0");
+
+  commands.spawn((
+    Car,
+    SceneBundle {
+      scene: model,
+      transform: Transform::from_xyz(0.0, 0.0, 0.0),
+      ..default()
+    },
+  ));
+}</code></pre>
+<p>我们还可以选择将<code>Handles</code>存储在资源中加载的资产，以便它们在其他系统中轻松使用：</p>
+<pre><code class="language-rust">#[derive(Resource)]
+struct CarAssets {
+  body: Option&lt;Handle&lt;Mesh&gt;&gt;,
+}
+
+fn load_car_body(
+  asset_server: Res&lt;AssetServer&gt;,
+  mut car: ResMut&lt;CarAssets&gt;
+) {
+  let car_handle = asset_server.load("models/cars/basic.gltf#Mesh0/Primitive0");
+  car.body = Some(car_handle);
+}</code></pre>
+<p>稍后，也许在其他系统中我们可以访问此资源：</p>
+<pre><code class="language-rust">fn spawn_car(car: Res&lt;CarAssets&gt;, mut commands: Commands) {
+  if let Some(body) = car.body.as_ref() {
+    commands.spawn(PbrBundle {
+      mesh: body.clone(),
+      ..default()
+    });
+  }
+}</code></pre>
+<p>我们还可以通过代码创建资产：</p>
+<pre><code class="language-rust">use bevy::sprite::MaterialMesh2dBundle;
+
+fn spawn_ball(
+  mut commands: Commands,
+  mut meshes: ResMut&lt;Assets&lt;Mesh&gt;&gt;,
+  mut materials: ResMut&lt;Assets&lt;ColorMaterial&gt;&gt;,
+) {
+  let circle = Circle::new(BALL_SIZE);
+  let color = Color::BLACK;
+
+  // `Assets::add` will load these into memory and return a `Handle` (an ID)
+  // to these assets. When all references to this `Handle` are cleaned up
+  // the asset is cleaned up.
+  let mesh = meshes.add(circle);
+  let material = materials.add(color);
+
+  // Here we are using `spawn` instead of `spawn_empty` followed by an
+  // `insert`. They mean the same thing, letting us spawn many components on a
+  // new entity at once.
+  commands.spawn((MaterialMesh2dBundle {
+    mesh: mesh.into(),
+    material,
+    ..default()
+  },));
+}</code></pre>
+<p>当需要在屏幕上绘制简单形状并为其设置动画时，这种资源加载非常适合较小的原型。</p>
+<h2 id="asset-handles-资产句柄"><a class="header" href="#asset-handles-资产句柄">Asset handles 资产句柄</a></h2>
+<p>当我们使用<code>Asset&lt;T&gt;</code>和<code>AssetServer</code>资源加载某些内容时，它们都会返回一个<code>Handle&lt;T&gt;</code>。</p>
+<p>这些<a href="https://taintedcoders.com/rust/handles">句柄</a>就像指针，让我们在需要时获取实际资源，而不是直接传递它。句柄可以克隆为强句柄或弱句柄，并将由<code>Asset&lt;T&gt;</code>资源进行计数。</p>
+<p>当所有强句柄都被删除时，资产也会被删除并从内存中卸载。因此，为了保持我们的资源加载，它们必须至少在<code>Component</code>或<code>Resource</code>上引用。</p>
+<p><code>AssetServer</code>加载的每个资源都会根据文件扩展名映射到<code>Handle&lt;T&gt;</code>：</p>
+<p><img src="https://i.imgur.com/pdTDFEV.png" alt="assets handles" /></p>
+<p>这些句柄是我们传递给其他组件的内容，然后这些组件又知道如何处理底层数据。这样它就可以只解决需要的问题。</p>
+<pre><code class="language-rust">// From our table above we know that because of the `.glb`
+// extension it will give us back a `Handle&lt;Gltf&gt;` provided by
+// a `GltfLoader`
+let model = asset_server.load("models/ambulance.glb#Scene0");
+
+commands.spawn((
+  Car,
+  SceneBundle {
+    scene: model,
+    transform: Transform::from_xyz(0.0, 0.0, 0.0),
+    ..default()
+  },
+));</code></pre>
+<h2 id="asset-events-资产事件"><a class="header" href="#asset-events-资产事件">Asset events 资产事件</a></h2>
+<p>我们的资产在创建、修改或删除时会触发某些事件：</p>
+<ol>
+<li><code>AssetEvent::Created</code></li>
+<li><code>AssetEvent::LoadedWithDependencies</code></li>
+<li><code>AssetEvent::Modified</code></li>
+<li><code>AssetEvent::Removed</code></li>
+<li><code>AssetEvent::Unused</code></li>
+</ol>
+<p>这让我们能够对资产的变化做出反应：</p>
+<pre><code class="language-rust">use bevy::asset::AssetEvent;
+
+fn react_to_images(mut events: EventReader&lt;AssetEvent&lt;Image&gt;&gt;) {
+  for event in events.read() {
+    match event {
+      AssetEvent::Added { id } =&gt; {
+        // React to the image being created
+      }
+      AssetEvent::LoadedWithDependencies { id } =&gt; {
+        // React to the image being modified
+      }
+      AssetEvent::Modified { id } =&gt; {
+        // React to the image being modified
+      }
+      AssetEvent::Removed { id } =&gt; {
+        // React to the image being removed
+      }
+      AssetEvent::Unused { id } =&gt; {
+        // React to the last strong handle for the asset being dropped
+      }
+    }
+  }
+}</code></pre>
+<p>每个资产事件都会产生一个<code>AssetId&lt;T&gt;</code>，它是<code>Handle&lt;T&gt;</code>的较弱版本。<code>AssetId</code>可能指向不再存在的<code>Asset</code>。</p>
+<p>在大多数情况下，当您想要对表示资产“完全加载”的事件做出反应时，您应该使用<code>AssetEvent::LoadedWithDependencies</code>。</p>
+<h2 id="asset-sources-资产来源"><a class="header" href="#asset-sources-资产来源">Asset sources 资产来源</a></h2>
+<p>在<strong>Bevy</strong><code>0.12</code>之前，只有一个资产源：文件系统。但之后的资产系统现在允许处理多种类型。</p>
+<p>这是通过<code>AssetSource</code>处理的，它从定义应用程序时指定的特定源中抽象查找资产：</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    // This must be done before `AssetPlugin` (included in `DefaultPlugins`)
+    // finalizes building assets.
+    .register_asset_source(
+      "other",
+      AssetSourceBuilder::platform_default("assets/other", None),
+    )
+    .add_plugins(DefaultPlugins)
+    .add_systems(Startup, setup)
+    .run();
+}</code></pre>
+<p>通常资源来自<code>assets/</code>文件夹，但我们可以选择其他文件夹，例如<code>assets/other</code>或项目目录中的任何其他位置。</p>
+<pre><code class="language-rust">fn setup(mut commands: Commands, asset_server: Res&lt;AssetServer&gt;) {
+  commands.spawn(Camera2dBundle::default());
+
+  let path = Path::new("some_image.png");
+  let source = AssetSourceId::from("other");
+  let asset_path = AssetPath::from_path(path).with_source(source);
+
+  commands.spawn(SpriteBundle {
+    texture: asset_server.load(asset_path),
+    ..default()
+  });
+}</code></pre>
+<p>如果我们不想动态构造路径，我们也可以使用简写：</p>
+<pre><code class="language-rust">commands.spawn(SpriteBundle {
+  texture: asset_server.load("other://some_image.png"),
+  ..default()
+});</code></pre>
+<h2 id="asset-server-资产服务器"><a class="header" href="#asset-server-资产服务器">Asset server 资产服务器</a></h2>
+<p><code>AssetServer</code>是一种在后台使用文件系统异步加载资源的资源。它负责跟踪其管理的资产的加载状态。</p>
+<pre><code class="language-rust">fn spawn_boid(mut commands: Commands, asset_server: Res&lt;AssetServer&gt;) {
+  // Spawns the bevy logo in the center of the screen
+  commands.spawn(SpriteBundle {
+    transform: Transform::from_xyz(0., 0., 0.),
+    // The asset server will return a `Handle&lt;Image&gt;`
+    // but that does not mean the asset has
+    // been fully loaded yet.
+    texture: asset_server.load("images/bevy.png"),
+    ..default()
+  });
+}</code></pre>
+<p>资源是异步加载的。这意味着，当我们第一次生成此<code>SpriteBundle</code>时，即使资产服务器给我们返回了<code>Handle&lt;Image&gt;</code>，实际资产可能还不可用。</p>
+<p>我们可以使用<code>AssetServer::get_load_state</code>来检查资产是否已加载并可以在<code>Assets</code>集合中使用。</p>
+<h2 id="loading-assets-加载资源"><a class="header" href="#loading-assets-加载资源">Loading assets 加载资源</a></h2>
+<p>首先，我们可以使用资产服务器从文件加载图像：</p>
+<pre><code class="language-rust">#[derive(Resource)]
+struct BevyImage(Handle&lt;Image&gt;);
+
+fn load_sprites(
+  mut bevy_image: ResMut&lt;BevyImage&gt;,
+  asset_server: Res&lt;AssetServer&gt;,
+) {
+  bevy_image.0 = asset_server.load("images/bevy.png");
+}</code></pre>
+<p>这里我们加载图像并将<code>Handle&lt;Image&gt;</code>存储在资源中。然后在另一个系统中，我们可以查询该资产的加载状态，并且仅在我们知道资产已加载时生成我们的实体：</p>
+<pre><code class="language-rust">use bevy::asset::LoadState;
+
+fn on_asset_event(
+  mut commands: Commands,
+  asset_server: Res&lt;AssetServer&gt;,
+  bevy_image: Res&lt;BevyImage&gt;,
+) {
+  match asset_server.get_load_state(&amp;bevy_image.0) {
+    Some(LoadState::NotLoaded) =&gt; {}
+    Some(LoadState::Loading) =&gt; {}
+    Some(LoadState::Loaded) =&gt; {
+      commands.spawn(SpriteBundle {
+        transform: Transform::from_xyz(0., 0., 0.),
+        texture: bevy_image.0.clone(),
+        ..default()
+      });
+    }
+    Some(LoadState::Failed(_)) =&gt; {}
+    None =&gt; {}
+  }
+}</code></pre>
+<p>默认情况下，它会期望您的资产位于应用程序根目录内的<code>assets</code>文件夹中。</p>
+<p>您可以通过设置以下环境变量之一来更改<strong>Bevy</strong>假定您的资产所在的位置：</p>
+<ul>
+<li><code>BEVY_ASSET_ROOT</code></li>
+<li><code>CARGO_MANIFEST_DIR</code> 自动设置为您的 crate（工作区）的根文件夹。</li>
+</ul>
+<p>提供的<code>assets.load</code>路径必须包含文件扩展名。</p>
+<p>您还可以如上所述定义单独的<code>AssetSource</code>。</p>
+<h2 id="how-assets-are-processed-资产如何处理"><a class="header" href="#how-assets-are-processed-资产如何处理">How assets are processed 资产如何处理</a></h2>
+<p>资产由<code>AssetProcessor</code>处理，该处理过程旨在崩溃后仍可从中断处继续。</p>
+<p>为此，<strong>Bevy</strong>使用预写日志记录来从崩溃中恢复。因此，它将努力避免在错误期间重新处理资产。</p>
+<p>该处理器将在您的资产旁边创建<code>.meta</code>文件，我们可以准确配置每个文件的加载或处理方式。</p>
+<p>图像的元文件可能如下所示：</p>
+<pre><code class="language-rust">(
+  meta_format_version: "1.0",
+  asset: Load(
+    loader: "bevy_render::texture::image_loader::ImageLoader",
+    settings: (
+      format: FromExtension,
+      is_srgb: true,
+      sampler: Default,
+    ),
+  ),
+)</code></pre>
+<p>我们可以编辑这些文件来自定义 Bevy 加载该特定图像的方式。</p>
+<p>此处理是可选的，并通过在加载资源时设置<code>AssetServerMode</code>或<code>AssetMode</code>进行控制。</p>
+<h2 id="hot-reloading-热重载"><a class="header" href="#hot-reloading-热重载">Hot reloading 热重载</a></h2>
+<p>要启用热重载，建议使用可选的 Bevy 功能​​之一来实现：</p>
+<pre><code class="language-rust">[dependencies]
+bevy = {
+  version = "0.14.0",
+  features = [
+    "file_watcher",
+    "embedded_watcher"
+  ]
+}</code></pre>
+<p><code>file_watcher</code>功能将监视您的文件系统以了解资产的更改并热重载它们。</p>
+<p><code>embedded_watcher</code>功能将监视内存中的资源，并在它们发生变化时进行热重载。</p>
+<p>我们还可以使用<code>watch_for_changes_override</code>设置来启用该功能：</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins.set(AssetPlugin {
+      watch_for_changes_override: Some(true),
+      ..default()
+    }))
+    .run();
+}</code></pre>
+<h2 id="loading-assets-from-a-folder-从文件夹加载资源"><a class="header" href="#loading-assets-from-a-folder-从文件夹加载资源">Loading assets from a folder 从文件夹加载资源</a></h2>
+<p>如果我们有大量资产，我们可以通过将所有资产加载到一个系统中来使事情变得更容易：</p>
+<pre><code class="language-rust">use bevy::asset::LoadedFolder;
+
+fn load_models(asset_server: Res&lt;AssetServer&gt;) {
+  // You can load all assets in a folder like this. They will be loaded in
+  // parallel without blocking
+  let _scenes: Handle&lt;LoadedFolder&gt; = asset_server.load_folder("models/monkey");
+}</code></pre>
+<p>这将加载<code>models/cars</code>文件夹中的所有资源。</p>
+<h2 id="custom-asset-loader-自定义资产加载器"><a class="header" href="#custom-asset-loader-自定义资产加载器">Custom asset loader 自定义资产加载器</a></h2>
+<p>如果您的资源不属于<strong>Bevy</strong>支持的正常文件类型，您可以创建自己的自定义资源加载器。</p>
+<p>首先，我们需要创建加载器、要加载的自定义资产以及可选的资产设置：</p>
+<pre><code class="language-rust">use serde::{Deserialize, Serialize};
+
+#[derive(Default)]
+pub struct MyAssetLoader;
+
+#[derive(Asset, TypePath)]
+pub struct MyAsset {
+  value: String,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct MyAssetSettings {
+  some_setting: bool,
+}</code></pre>
+<p>资产加载器有 3 种类型需要定义：</p>
+<ul>
+<li>资产类型</li>
+<li>资产设置类型</li>
+<li>错误类型</li>
+</ul>
+<p>可以通过从库（例如<code>thiserror</code>）派生<code>Error</code>来定义错误：</p>
+<pre><code class="language-rust">use thiserror::Error;
+
+#[non_exhaustive]
+#[derive(Debug, Error)]
+pub enum MyAssetLoaderError {
+  /// An [IO](std::io) Error
+  #[error("Could load shader: {0}")]
+  Io(#[from] std::io::Error),
+}</code></pre>
+<p>定义了所有三种类型后，我们可以为自定义资源加载器实现<code>AssetLoader</code>：</p>
+<pre><code class="language-rust">use bevy::asset::{
+    AssetLoader,
+    LoadContext,
+    io::Reader
+};
+
+use futures_lite::AsyncReadExt;
+
+impl AssetLoader for MyAssetLoader {
+  type Asset = MyAsset;
+  type Settings = MyAssetSettings;
+  type Error = MyAssetLoaderError;
+
+  async fn load&lt;'a&gt;(
+    &amp;'a self,
+    reader: &amp;'a mut Reader&lt;'_&gt;,
+    _settings: &amp;'a MyAssetSettings,
+    _load_context: &amp;'a mut LoadContext&lt;'_&gt;,
+  ) -&gt; Result&lt;Self::Asset, Self::Error&gt; {
+    let mut bytes = Vec::new();
+    reader.read(&amp;mut bytes).await?;
+    // convert bytes to value somehow
+    let value = "Hello World!";
+    Ok(MyAsset {
+      value: value.into(),
+    })
+  }
+
+  fn extensions(&amp;self) -&gt; &amp;[&amp;str] {
+    &amp;["thing"]
+  }
+}</code></pre>
+<p>要使用读取器读取异步值，您需要使用<code>futures_lite</code>扩展，否则您将收到错误，表明读取器未将<code>read</code>方法定义为其仍为未来值。</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .init_asset_loader::&lt;MyAssetLoader&gt;()
+    .init_asset::&lt;MyAsset&gt;()
+    .run();
+}</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="ecs.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="entities.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="ecs.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="entities.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
