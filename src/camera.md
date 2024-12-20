@@ -1,116 +1,245 @@
-# 摄像机
+# Camera 相机
 
-Camera 在 Bevy 中驱动所有渲染。它们负责配置绘制内容、绘制方式和绘制位置。
+如果您只加载一个`Window`而没有摄像头，**Bevy**将显示黑屏。
 
-你必须至少拥有一个摄像机实体，才能显示任何内容！如果忘记生成摄像机，会看到一个空的黑屏。
+[Windows]处理操作系统上窗口的逻辑，但**Bevy**如何知道在其上实际显示什么？
 
-在最简单的情况下，可以使用默认设置创建摄像机。只需使用 Camera2dBundle 或 Camera3dBundle 生成一个实体。它会绘制所有可见的可渲染实体。
+这就是使用相机的地方。它们的位置类似于具有`Transform`组件的其他实体。
 
-实用建议：始终为你的摄像机实体创建标记组件，这样可以方便地查询摄像机。
+**Bevy**中的坐标系遵循右手准则，因此：
+
+- X 向右
+- Y 向上
+- Z 向屏幕
+- 默认中心为屏幕中心(0,0)
+
+当我们生成摄像机时，我们会根据我们的游戏使用`Camera2dBundle`或`Camera3dBundle`。
+
 ```rust
+// Useful for marking the "main" camera if we have many
 #[derive(Component)]
-struct MyGameCamera;
+pub struct MainCamera;
 
-fn setup(mut commands: Commands) {
+fn initialize_camera(
+  mut commands: Commands
+) {
   commands.spawn((
     Camera2dBundle::default(),
-    MyGameCamera,
+    MainCamera
+));
+}
+```
+
+摄像机行为通常非常通用，并且与游戏逻辑的其余部分分开，因此创建一个摄像机插件并将其添加到应用程序中是更推荐的做法：
+
+```rust
+pub struct CameraPlugin;
+
+impl Plugin for CameraPlugin {
+  fn build(&self, app: &mut App) {
+    app.add_systems(Startup, initialize_camera);
+  }
+}
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_plugins(CameraPlugin)
+    .run();
+}
+```
+
+捆绑包本身有多种选项可供我们调整：
+
+```rust
+#[derive(Bundle, Clone)]
+pub struct Camera2dBundle {
+    pub camera: Camera,
+    pub camera_render_graph: CameraRenderGraph,
+    /// Note: default value for `OrthographicProjection.near` is `0.0`
+    /// which makes objects on the screen plane invisible to 2D camera.
+    /// `Camera2dBundle::default()` sets `near` to negative value,
+    /// so be careful when initializing this field manually.
+    pub projection: OrthographicProjection,
+    pub visible_entities: VisibleEntities,
+    pub frustum: Frustum,
+    pub transform: Transform,
+    pub global_transform: GlobalTransform,
+    pub camera_2d: Camera2d,
+    pub tonemapping: Tonemapping,
+    pub deband_dither: DebandDither,
+    pub main_texture_usages: CameraMainTextureUsages,
+}
+```
+
+## Camera projection 相机投影
+
+**Bevy**的默认摄像机使用具有对称视锥体的正交投影。
+
+不要惊慌！让我们把这一切分解一下。
+
+此处的**Projection**是指将**3D**场景转换为屏幕或视口上的**2D**表示的过程。
+
+由于计算机屏幕是**2D**的，我们需要将物体的**3D**世界及其位置转换为可以显示的平面图像。
+
+**正交投影**是一种保留物体的相对大小及其与我们之间的距离的投影。
+
+换句话说，如果两个对象在**3D**世界中与观察者的距离不同，则它们在**2D**屏幕上的投影大小将准确反映它们在**3D**世界中的大小。
+
+另一方面，平截头体是指一个截断的金字塔形状，它代表计算机图形学中的可视体积或视野。它就像一个顶部被切掉的金字塔，导致金字塔形状更小。
+
+![frustum](https://i.imgur.com/Aq3bgKs.png)
+
+在对称平截体体中，截断金字塔的形状是平衡的或对称的，这意味着左侧和右侧以及顶部和底部的大小和形状相等。
+
+## Directing the camera 对准相机
+
+要在场景中移动摄像机，我们只需要更改其`translation`：
+
+```rust
+fn move_camera(
+  mut camera: Query<&mut Transform, (With<Camera2d>, Without<Player>)>,
+  player: Query<&Transform, (With<Player>, Without<Camera2d>)>,
+  time: Res<Time>,
+) {
+  let Ok(mut camera) = camera.get_single_mut() else {
+    return;
+  };
+
+  let Ok(player) = player.get_single() else {
+    return;
+  };
+
+  let Vec3 { x, y, .. } = player.translation;
+  let direction = Vec3::new(x, y, camera.translation.z);
+
+  camera.translation = camera
+    .translation
+    .lerp(direction, time.delta_seconds() * 2.);
+}
+```
+
+我们本可以在每一帧中将摄像机对齐到玩家的位置，但在这里我们使用线性插值来平滑这种效果，这在自上而下的游戏中很常见。
+
+为了更改摄像机的缩放比例，我们操作`OrthographicProjection`组件。
+
+```rust
+fn zoom_control_system(
+  input: Res<ButtonInput<KeyCode>>,
+  mut camera_query: Query<&mut OrthographicProjection, With<MainCamera>>,
+) {
+  let mut projection = camera_query.single_mut();
+
+  if input.pressed(KeyCode::Minus) {
+    projection.scale += 0.2;
+  }
+
+  if input.pressed(KeyCode::Equal) {
+    projection.scale -= 0.2;
+  }
+
+  projection.scale = projection.scale.clamp(0.2, 5.);
+}
+```
+
+## Render Layers 渲染层
+
+当我们希望摄像机仅渲染某些实体时，可以使用`RenderLayers`组件。
+
+默认情况下，所有组件都在第`0`层渲染，并且有`32`层`TOTAL_LAYERS`可供选择。 
+
+将它附加到我们的相机会设置它应该渲染的实体。
+
+将其附加到我们的其他实体会设置哪个摄像机应该进行渲染。
+
+```rust
+// RenderLayers are Copy so aliases work to improve clarity
+const BACKGROUND: RenderLayers = RenderLayers::layer(1);
+const FOREGROUND: RenderLayers = RenderLayers::layer(2);
+
+fn initialize_cameras(mut commands: Commands) {
+  commands.spawn((
+    Camera2dBundle::default(),
+    FOREGROUND,
+    MainCamera
+  ));
+
+  commands.spawn((
+    Camera2dBundle::default(),
+    BACKGROUND
+  ));
+}
+
+#[derive(Component)]
+struct Player;
+
+fn spawn_player(
+  mut commands: Commands
+) {
+  commands.spawn((
+    Player,
+    FOREGROUND
   ));
 }
 ```
 
-## 摄像机 Transform
-摄像机拥有 Transform，可以用于定位或旋转摄像机。这就是移动摄像机的方法。
+## Rendering Order 渲染顺序
 
-## 缩放摄像机
-不要使用 Transform 来缩放摄像机！这只是拉伸图像，并不是真正的缩放。这可能还会导致其他问题和不兼容性，应该使用 Projection 来缩放。
+多个摄像机都将渲染到同一个窗口。当我们想要控制此渲染的顺序时，我们可以使用优先级。
 
-对于正交投影，改变缩放比例。对于透视投影，改变视场（FOV）。视场模拟镜头缩放效果。
+具有较高阶次的摄影机会稍后渲染，因此会位于较低阶摄影机的顶部。
+
+我们可以想象它有点像一个油画家。应用于画布的第一个图层是背景，后续图层绘制在上面。
+
 ```rust
-fn scale_camera(mut projection: Query<&mut Projection, With<MyCamera>>) {
-    let Ok(projection) = projection.get_single_mut() else {
-        return;
-    };
-    match projection.into_inner() {
-        Projection::Orthographic(projection) => {
-            if (projection.scale - 0.15).abs() <= f32::EPSILON {
-                projection.scale ##05;
-            } else {
-                projection.scale ##15;
-            }
-        }
-        Projection::Perspective(projection) => {
-            if (projection.fov - 0.785).abs() <= f32::EPSILON {
-                projection.fov ##2;
-            } else {
-                projection.fov ##785;
-            }
-        }
-    }
+use bevy::render::camera::ClearColorConfig;
+
+fn render_order(
+  mut commands: Commands
+) {
+  // This camera defaults to priority 0 and is rendered "first" / "at the back" 
+  commands.spawn(Camera3dBundle::default());
+
+  // This camera renders "after" / "at the front"
+  commands.spawn(Camera3dBundle {
+    camera_3d: Camera3d {
+      ..default()
+    },
+    camera: Camera {
+      // renders after / on top of the main camera
+      order: 1,
+      // don't clear the color while rendering this camera
+      clear_color: ClearColorConfig::None,
+      ..default()
+    },
+    ..default()
+  });
 }
 ```
 
-## Projection（投影）
-摄像机投影负责将坐标系映射到视口（通常是屏幕/窗口）。它配置坐标空间以及图像的任何缩放/拉伸。
+## Mouse coordinates 鼠标坐标
 
-Bevy 提供两种投影：正交投影和透视投影。它们是可配置的，以服务于各种不同的使用场景。
+当您将鼠标放在屏幕上时，它将有两个位置：
 
-正交投影意味着无论物体距离摄像机多远，大小始终相同。
+- On-screen coordinates (the position of the pixel on a screen)
+- World coordinates (the position of the mouse projected onto our game)
 
-透视投影意味着物体距离摄像机越远，看起来越小。这是为 3D 图形提供深度和距离感的效果。
+因此，当我们读取`Window::cursor_position`时，我们只获取屏幕上的坐标。我们必须通过根据我们的相机投影它们来进一步转换它们：
 
-2D 摄像机始终是正交的。
-
-3D 摄像机可以使用任一种投影。透视是最常见（也是默认）的选择。正交投影适用于如 CAD 和工程等应用，在这些应用中，你希望准确表示物体的尺寸，而不是创造逼真的 3D 空间感。一些游戏（尤其是模拟游戏）出于艺术选择使用正交投影。
-
-可以实现自定义摄像机投影。这可以让你完全控制坐标系统。不过，请注意，如果违反 Bevy 的坐标系统约定，可能会导致行为异常！
 ```rust
-fn toggle_perspective_orthographic(mut projection: Query<&mut Projection, With<MyCamera>>) {
-    let Ok(mut projection) = projection.get_single_mut() else {
-        return;
-    };
-    if let Projection::Perspective(_) = projection.as_ref() {
-        *projection = Projection::Orthographic(OrthographicProjection {
-            scale: 0.15,
-            ..default()
-        });
-    } else {
-        *projection = Projection::Perspective(PerspectiveProjection::default());
-    }
-}
-```
+fn mouse_coordinates(
+  window_query: Query<&Window>,
+  camera_query: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
+) {
+  let window = window_query.single();
+  let (camera, camera_transform) = camera_query.single();
 
-## 渲染层
-RenderLayers 是一种过滤哪些实体应该由哪些相机绘制的方法。将此组件插入到你的实体上，以将它们放置在特定的“层”中。
-
-将此组件插入到相机实体上可以选择该相机应该渲染哪些层。将此组件插入到可渲染实体上可以选择哪些相机应该渲染这些实体。如果相机的层和实体的层之间有任何重叠（它们至少有一个共同的层），则该实体将被渲染。
-
-如果实体没有 RenderLayers 组件，则假定它属于第 0 层（仅此一层）。
-
-你还可以在实体生成后修改其渲染层
-```rust
-fn toggle_render_layers(mut render_layers: Query<&mut RenderLayers>) {
-    for mut render_layer in &mut render_layers {
-        if render_layer.iter().next().unwrap() == 0 {
-            *render_layer = RenderLayers::layer(1);
-        } else {
-            *render_layer = RenderLayers::layer(0);
-        }
-    }
-}
-```
-
-## 禁用摄像机
-你可以在不销毁相机的情况下停用它。这在你想保留相机实体及其携带的所有配置，以便以后可以轻松重新启用时非常有用。
-```rust
-fn toggle_camera_active(mut camera: Query<&mut Camera, With<MyCamera>>) {
-    let Ok(mut camera) = camera.get_single_mut() else {
-        return;
-    };
-    if camera.is_active {
-        camera.is_active = false;
-    } else {
-        camera.is_active = true;
-    }
+  if let Some(world_position) = window
+    .cursor_position()
+    .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
+    .map(|ray| ray.origin.truncate())
+  {
+    info!("World coords: {}/{}", world_position.x, world_position.y);
+  }
 }
 ```
