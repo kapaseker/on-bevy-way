@@ -1,4 +1,4 @@
-# Component 组件
+# Components 组件
 
 在[实体组件系统 （ECS）](./ecs.md) 中，你可以想象你的行是实体，你的组件是列。
 
