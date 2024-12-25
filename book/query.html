@@ -536,6 +536,38 @@ fn attack_selected_enemies(
 <p>如果两个系统都访问相同的组件类型，并且至少其中一个访问是可变的，则两个系统不能并行执行。</p>
 <p>除非执行者可以验证在两个查询中都找不到实体，否则就会发生这种情况。为此，它使用 <a href="./arche">archetypes</a> 来加快查找过程。</p>
 <p>在原型碎片较多的世界中，<code>for_each</code> 方法通常比其 <code>iter</code> 版本更快。除非确实需要性能，否则建议使用 <code>iter</code> 方法而不是 <code>for_each</code> 方法。</p>
+<h2 id="query-transmutation-查询嬗变"><a class="header" href="#query-transmutation-查询嬗变">Query Transmutation 查询嬗变</a></h2>
+<p>如果希望一个 <code>Query</code> 产生另一个兼容的 <code>Query</code> ，你可以创建一个名为 <code>QueryLens</code> 的工具进行查询。</p>
+<pre><code class="language-rust">fn debug_positions(
+    query: Query&lt;&amp;Transform&gt;,
+) {
+    for transform in query.iter() {
+        eprintln!("{:?}", transform.translation);
+    }
+}
+
+fn move_player(
+    mut query_player: Query&lt;&amp;mut Transform, With&lt;Player&gt;&gt;,
+) {
+    // TODO: mutate the transform to move the player
+
+    // say we want to call our debug_positions function
+
+    // first, convert into a query for `&amp;Transform`
+    let mut lens = query_player.transmute_lens::&lt;&amp;Transform&gt;();
+    debug_positions(lens.query());
+}
+
+fn move_enemies(
+    mut query_enemies: Query&lt;&amp;mut Transform, With&lt;Enemy&gt;&gt;,
+) {
+    // TODO: mutate the transform to move our enemies
+
+    let mut lens = query_enemies.transmute_lens::&lt;&amp;Transform&gt;();
+    debug_positions(lens.query());
+}</code></pre>
+<p>注意：当我们从每个函数调用 <code>debug_positions</code> 时，它将访问的是不同的实体！即使 <code>Query&lt;&amp;Transform&gt;</code> 参数类型没有任何额外的过滤器。因为它是通过 <code>QueryLens</code> 创建的，因此它只能访问源自原始 <code>Query</code> 的实体和组件。如果我们添加 <code>debug_positions</code> 为 <strong>Bevy</strong> 作为常规系统，它才会访问所有实体。</p>
+<p>另：这会产生一些性能开销；转换操作不是无负担的。<strong>Bevy</strong> 通常会在多个运行的系统中缓存一些查询元数据。当创建新查询时，会复制它。</p>
 
                     </main>
 

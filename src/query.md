@@ -508,3 +508,43 @@ fn fast_move_players(
 除非执行者可以验证在两个查询中都找不到实体，否则就会发生这种情况。为此，它使用 [archetypes](./arche) 来加快查找过程。
 
 在原型碎片较多的世界中，`for_each` 方法通常比其 `iter` 版本更快。除非确实需要性能，否则建议使用 `iter` 方法而不是 `for_each` 方法。
+
+
+## Query Transmutation 查询嬗变
+
+如果希望一个 `Query` 产生另一个兼容的 `Query` ，你可以创建一个名为 `QueryLens` 的工具进行查询。
+
+```rust
+fn debug_positions(
+    query: Query<&Transform>,
+) {
+    for transform in query.iter() {
+        eprintln!("{:?}", transform.translation);
+    }
+}
+
+fn move_player(
+    mut query_player: Query<&mut Transform, With<Player>>,
+) {
+    // TODO: mutate the transform to move the player
+
+    // say we want to call our debug_positions function
+
+    // first, convert into a query for `&Transform`
+    let mut lens = query_player.transmute_lens::<&Transform>();
+    debug_positions(lens.query());
+}
+
+fn move_enemies(
+    mut query_enemies: Query<&mut Transform, With<Enemy>>,
+) {
+    // TODO: mutate the transform to move our enemies
+
+    let mut lens = query_enemies.transmute_lens::<&Transform>();
+    debug_positions(lens.query());
+}
+```
+
+注意：当我们从每个函数调用 `debug_positions` 时，它将访问的是不同的实体！即使 `Query<&Transform>` 参数类型没有任何额外的过滤器。因为它是通过 `QueryLens` 创建的，因此它只能访问源自原始 `Query` 的实体和组件。如果我们添加 `debug_positions` 为 **Bevy** 作为常规系统，它才会访问所有实体。
+
+另：这会产生一些性能开销；转换操作不是无负担的。**Bevy** 通常会在多个运行的系统中缓存一些查询元数据。当创建新查询时，会复制它。
