@@ -16,6 +16,7 @@
 - [Bundle](./bundle.md)
 - [查询](./query.md)
 - [坐标系](./coordinate.md)
+- [渲染](./rendering.md)
 - [变换](./transform.md)
 - [时间](./time.md)
 - [加载资产](./load_assets.md)

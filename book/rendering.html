@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>渲染 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">1.</strong> 应用</a></li><li class="chapter-item expanded "><a href="arche.html"><strong aria-hidden="true">2.</strong> 原型</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">3.</strong> ECS</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">4.</strong> 实体</a></li><li class="chapter-item expanded "><a href="components.html"><strong aria-hidden="true">5.</strong> 组件</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">6.</strong> 系统</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">7.</strong> 命令</a></li><li class="chapter-item expanded "><a href="assets.html"><strong aria-hidden="true">8.</strong> 资产</a></li><li class="chapter-item expanded "><a href="audio.html"><strong aria-hidden="true">9.</strong> 音频</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">10.</strong> 相机</a></li><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">11.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">12.</strong> 行为</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">13.</strong> 资源</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">14.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">15.</strong> 查询</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">16.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="rendering.html" class="active"><strong aria-hidden="true">17.</strong> 渲染</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">18.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">19.</strong> 时间</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">20.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">21.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">22.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">23.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="event.html"><strong aria-hidden="true">24.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">25.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">26.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html"><strong aria-hidden="true">27.</strong> 状态</a></li><li class="chapter-item expanded "><a href="plugin.html"><strong aria-hidden="true">28.</strong> 插件</a></li><li class="chapter-item expanded "><a href="change_detection.html"><strong aria-hidden="true">29.</strong> 变化检测</a></li><li class="chapter-item expanded "><a href="parent_child.html"><strong aria-hidden="true">30.</strong> 父子组件</a></li><li class="chapter-item expanded "><a href="visibility.html"><strong aria-hidden="true">31.</strong> 可见性</a></li><li class="chapter-item expanded "><a href="hdr.html"><strong aria-hidden="true">32.</strong> HDR和色调映射</a></li><li class="chapter-item expanded "><a href="bloom.html"><strong aria-hidden="true">33.</strong> 辉光</a></li><li class="chapter-item expanded "><a href="ime.html"><strong aria-hidden="true">34.</strong> 输入法</a></li><li class="chapter-item expanded "><a href="code.html"><strong aria-hidden="true">35.</strong> 代码组织</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="rendering-渲染"><a class="header" href="#rendering-渲染">Rendering 渲染</a></h1>
+<p><strong>Bevy</strong> 中的渲染是通过 wgpu 库完成的。这允许 <strong>Bevy</strong> 在本机和基于 Web 的环境中进行渲染。</p>
+<p><code>wgpu</code> 是一个基于 <code>WebGPU API</code> 的 <strong>Rust</strong> 安全可移植图形库。</p>
+<p>在 <strong>Bevy</strong> 中，每一帧都有两件大事发生：</p>
+<ul>
+<li>模拟我们得游戏运行逻辑</li>
+<li>渲染屏幕上的内容</li>
+</ul>
+<p>这两个部分是并行完成的，而渲染则是迄今为止更不熟悉的幕后工作。</p>
+<p>早期的 <strong>Bevy</strong> 渲染管道过于复杂，其中存在自行发明的抽象，这使得它很难学习。<code>Sprite</code> 渲染速度很慢，并且很难渲染到多个<a href="./window.html">窗口</a>。它还以落后的自定义方式实现了 wgpu。</p>
+<p>在 <strong>Bevy</strong> <code>0.6</code> 中，我们完成了第一个渲染管道的实现，它更快、更简单、模块化并提供更美观的渲染。</p>
+<p>新渲染器也是“ECS 驱动的”，这意味着“渲染世界”填充了从“主世界”提取的数据。这也意味着可以使用其他渲染组件修改摄像机等视图。</p>
+<p>由于在屏幕上绘制内容的成本相当高，因此 <strong>Bevy</strong> 会自动使用摄像机的视点来确定要绘制哪些内容，以及要忽略哪些内容，此过程称为“视锥体剔除”。</p>
+<h2 id="the-render-pipeline-渲染管线"><a class="header" href="#the-render-pipeline-渲染管线">The Render Pipeline 渲染管线</a></h2>
+<p><strong>Bevy</strong> 渲染管道有 5 个步骤：</p>
+<ol>
+<li><strong>提取</strong>，其中渲染所需的所有信息都取自游戏世界</li>
+<li><strong>准备</strong>，设置所有顶点数据并写入顶点缓冲区的位置</li>
+<li><strong>排队</strong>，获取创建的管道，设置绑定组并将实体添加到“渲染阶段”（我们将用于执行绘制调用的项目列表）</li>
+<li><strong>渲染图</strong>，它位于正常的 ECS 和系统流之外，并调用生成绘制调用的每个节点</li>
+<li><strong>Draw 函数</strong>，我们使用上一步生成的 <code>RenderCommand</code> 在屏幕上执行实际绘图</li>
+</ol>
+<h3 id="extraction-提取"><a class="header" href="#extraction-提取">Extraction 提取</a></h3>
+<p>此步骤的目标是从游戏世界中提取我们需要的所有数据，以便模拟和渲染可以继续进行，而无需相互担心。</p>
+<p>它充当同步点，因此模拟和渲染都将在此步骤中锁定，并且在此步骤完成之前无法继续。</p>
+<p>由于它的阻塞性质，因此必须尽可能快地保持此步骤，并且只复制值，而不需要任何繁重的算法。</p>
+<p>两个系统将会添加到我们得应用：一个用于提取摄像机视图，另一个用于提取 UI 节点。此系统生成一个 <code>ExtractedView</code> 组件，该组件被包装到队列步骤期间使用的渲染阶段。</p>
+<p>我们需要 <code>ExtractedView</code>，它考虑了我们的摄像机视图，以便我们可以将节点相对于其视点投影到屏幕上。</p>
+<h3 id="prepare-准备"><a class="header" href="#prepare-准备">Prepare 准备</a></h3>
+<p>这里我们的目标是写入点并将组数据绑定到  <code>UiMeta</code>  资源。</p>
+<h3 id="queue-队列"><a class="header" href="#queue-队列">Queue 队列</a></h3>
+<p>在这里，我们通过告诉 GPU 我们如何在前面的准备步骤中布置顶点数据来设置 <code>UiPipeline</code>。</p>
+<p>然后，我们设置顶点和片段着色器。<strong>Bevy</strong> 还使用一些缓存来检查此管道的句柄，以查看它是否已更改，否则我们可以缓存结果。</p>
+<h3 id="render-graph-渲染图"><a class="header" href="#render-graph-渲染图">Render Graph 渲染图</a></h3>
+<p>在此步骤中，我们将创建一个非循环渲染图，其中包含在屏幕上渲染节点的所有步骤。</p>
+<p>渲染图是一种以模块化方式对 GPU 命令构造进行逻辑建模的方法。图形节点将纹理和缓冲区等 GPU 资源（有时是实体）相互传递，形成有向无环图。</p>
+<p>当图形节点运行时，它使用其图形输入和 Render World 来构建 GPU 命令列表。</p>
+<p>渲染图还支持可由任何节点调用的子图（基本上是命名空间图）（例如，“2d”子图和“3d”子图用于游戏的不同部分或多个窗口）。</p>
+<p>这还将调用 wgpu 以开始渲染通道。</p>
+<h3 id="draw-functions-绘制函数"><a class="header" href="#draw-functions-绘制函数">Draw functions 绘制函数</a></h3>
+<p>我们的渲染通道已经开始，我们开始渲染我们的阶段项。</p>
+<p>对于我们添加到渲染阶段的每个项目，我们在 <code>DrawFunction</code> 上调用 <code>draw</code>。</p>
+<p><code>Draw</code>  实际上只是一个我们可以自己实现或使用  <code>RenderCommand</code>  的 trait。</p>
+<p><code>RenderCommand</code>  本身可以是  <code>RenderCommand</code>  的元组。</p>
+<h2 id="textures-纹理"><a class="header" href="#textures-纹理">Textures 纹理</a></h2>
+<p>纹理是指用于向 3D 模型表面添加细节、颜色和图案的二维图像。纹理通常是在 Photoshop 或 GIMP 等图像编辑软件中创建的。</p>
+<p>它们可以是简单的图像，例如木纹的图片，也可以是定义材质不同方面的复杂贴图，例如漫反射贴图、法线贴图、镜面反射贴图等。</p>
+<p>纹理通常以 PNG 或 JPEG 等格式存储为文件。</p>
+<p><code>TextureAtlas</code>  用于瓦片地图或 Sprite 地图并对其进行导航。</p>
+<h2 id="materials-材质"><a class="header" href="#materials-材质">Materials 材质</a></h2>
+<p><code>Material</code>定义光线与对象表面的交互方式。它确定视觉属性，例如颜色、反射率、光泽度、透明度等。</p>
+<p>纹理将应用于材质。你可以将纹理视为对象外观的视觉细节，而材质包含有关纹理在给定环境下应如何显示的规则。</p>
+<p>在 <strong>Bevy</strong> 中，材质是使用着色器定义的，着色器是在 GPU 上运行的程序，用于计算光线如何与对象的几何体交互。</p>
+<p><a href="https://google.github.io/filament/Material%20Properties.pdf">基于物理的渲染 （Physical based rendering，PBR）</a>  使用一系列属性来模拟现实：</p>
+<ul>
+<li>Color 颜色</li>
+<li>Metalic 金属</li>
+<li>Roughness 粗糙度</li>
+<li>Reflectance 反射系数</li>
+<li>Clear coat 透明图层</li>
+<li>Clear coat roughness 透明涂层粗糙度</li>
+<li>Anisotrophy (shapliness) 各向异性</li>
+</ul>
+<h2 id="meshes-网格"><a class="header" href="#meshes-网格">Meshes 网格</a></h2>
+<p>渲染游戏对象时，网格提供应用纹理和材质的底层几何体。</p>
+<p>网格的顶点存储位置信息，这些信息决定了对象的形状和结构。边连接顶点，面定义形成对象可见表面的多边形。</p>
+<p>纹理通常使用 UV 坐标映射到网格上，UV 坐标定义纹理图像如何包裹在几何体周围。UV 坐标将网格表面上的特定点分配给纹理图像中的相应像素。</p>
+<p>该材质负责确定光线如何被网格的不同部分反射或吸收，从而赋予其特定的视觉外观。</p>
+<p>在 <strong>Bevy</strong> 中，我们提供了一些表示常见形状的内置网格：</p>
+<ul>
+<li><code>Cube</code></li>
+<li><code>Box</code></li>
+<li><code>Quad</code>  (deprecated in  <code>0.13</code>, replaced with  <code>Rectangle</code>)<code>Quad</code></li>
+<li><code>Rectangle</code></li>
+<li><code>Plane</code></li>
+<li><code>Capsule</code></li>
+<li><code>Cylinder</code></li>
+<li><code>Icosphere</code>  a sphere made from a subdivided Icosahedron.</li>
+<li><code>RegularPolygon</code></li>
+<li><code>Torus</code></li>
+<li><code>UVSphere</code>  a sphere made of sectors and stacks.</li>
+</ul>
+<h2 id="rendering-entities-渲染实体"><a class="header" href="#rendering-entities-渲染实体">Rendering entities 渲染实体</a></h2>
+<p>实际上，我们可以通过为实体提供  <code>Material</code>（包含  <code>Texture</code>）和  <code>Mesh</code>  来在屏幕上渲染实体：</p>
+<pre><code class="language-rust">use bevy::{
+  color::palettes::css::RED,
+  math::prelude::*, prelude::*,
+  sprite::MaterialMesh2dBundle,
+};
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_systems(Startup, setup)
+    .run();
+}
+
+fn setup(
+  mut commands: Commands,
+  mut meshes: ResMut&lt;Assets&lt;Mesh&gt;&gt;,
+  mut materials: ResMut&lt;Assets&lt;ColorMaterial&gt;&gt;,
+  asset_server: Res&lt;AssetServer&gt;,
+) {
+  // Spawn our viewport so we can see things
+  commands.spawn(Camera2dBundle::default());
+
+  let red: Color = RED.into();
+  let circle = Circle::new(50.);
+
+  // Circle mesh
+  commands.spawn(MaterialMesh2dBundle {
+    mesh: meshes.add(circle).into(),
+    material: materials.add(ColorMaterial::from(red)),
+    transform: Transform::from_xyz(-150., 0., 0.),
+    ..default()
+  });
+
+  // Sprite
+  commands.spawn(SpriteBundle {
+    texture: asset_server.load("enemy.png"),
+    transform: Transform::from_translation(Vec3::new(-50., 0., 0.)),
+    ..default()
+  });
+}</code></pre>
+<p>对 <code>into()</code> 的调用让你的编译器弄清楚如何将更基本的类型更改为函数期望的类型，而不必手动转换。它通过在相应类型上实施 <code>From</code> 和 <code>Into</code> 特征来实现此目的。</p>
+<p>当我们调用  <code>materials.add</code>  或  <code>meshes.add</code>  时，我们在<code>Assets</code>中插入了一个<code>Asset</code>，并得到了一个<a href="https://taintedcoders.com/rust/handles">句柄</a>。它还会创建一个  <code>AssetEvent::Created</code>，如果我们愿意，我们可以在其他系统中读取它。</p>
+<h2 id="text-文本"><a class="header" href="#text-文本">Text 文本</a></h2>
+<p><strong>Bevy</strong> 中的默认文本大小为  <code>24px</code>。要更改任何默认样式，我们渲染两个捆绑包中的一个并传入我们自己的  <code>TextStyle</code>。</p>
+<p>我们可以使用  <code>Text2dBundle</code>  将文本渲染为场景的一部分：</p>
+<pre><code class="language-rust">fn spawn_text(asset_server: ResMut&lt;AssetServer&gt;, mut commands: Commands) {
+  let font = asset_server.load("fonts/FiraSans-Bold.ttf");
+  let text_style = TextStyle {
+    font: font.clone(),
+    font_size: 60.0,
+    color: Color::WHITE,
+  };
+
+  let text = Text::from_section("translation", text_style.clone());
+
+  // 2d camera
+  commands.spawn(Camera2dBundle::default());
+  // Demonstrate changing translation
+  commands.spawn(Text2dBundle {
+    text: text.with_justify(JustifyText::Center),
+    ..default()
+  });
+}</code></pre>
+<p>或者使用  <code>TextBundle</code>  将其作为 UI 的一部分呈现：</p>
+<pre><code class="language-rust">fn spawn_text_bundle(
+  asset_server: ResMut&lt;AssetServer&gt;,
+  mut commands: Commands,
+) {
+  commands.spawn(
+    // Create a TextBundle that has a Text with a single section.
+    TextBundle::from_section(
+      // Accepts a `String` or any type that converts into a `String`, such as `&amp;str`
+      "hello\nbevy!",
+      TextStyle {
+        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+        font_size: 100.0,
+        color: Color::WHITE,
+      },
+    ) // Set the alignment of the Text
+    .with_text_justify(JustifyText::Center)
+    // Set the style of the TextBundle itself.
+    .with_style(Style {
+      position_type: PositionType::Absolute,
+      bottom: Val::Px(5.0),
+      right: Val::Px(15.0),
+      ..default()
+    }),
+  );
+}</code></pre>
+<h2 id="lighting-照明"><a class="header" href="#lighting-照明">Lighting 照明</a></h2>
+<p>常见照明捆绑包（<strong>Bevy</strong> <code>0.15</code> 官方已经在库包中不再使用捆绑包，当然开发者依然可以使用）：</p>
+<ul>
+<li><code>PointLightBundle</code>从中心点向各个方向发射光的光</li>
+<li><code>SpotLightBundle</code>从中心点向给定方向发射光的光</li>
+<li><code>DirectionalLightBundle</code>来自非常远的地方的定向光（如太阳）</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="coordinate.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="transform.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="coordinate.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="transform.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
