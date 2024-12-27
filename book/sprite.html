@@ -1,0 +1,526 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>精灵 - on bevy way</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="app.html"><strong aria-hidden="true">1.</strong> 应用</a></li><li class="chapter-item expanded "><a href="arche.html"><strong aria-hidden="true">2.</strong> 原型</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">3.</strong> ECS</a></li><li class="chapter-item expanded "><a href="entities.html"><strong aria-hidden="true">4.</strong> 实体</a></li><li class="chapter-item expanded "><a href="components.html"><strong aria-hidden="true">5.</strong> 组件</a></li><li class="chapter-item expanded "><a href="system.html"><strong aria-hidden="true">6.</strong> 系统</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">7.</strong> 命令</a></li><li class="chapter-item expanded "><a href="assets.html"><strong aria-hidden="true">8.</strong> 资产</a></li><li class="chapter-item expanded "><a href="audio.html"><strong aria-hidden="true">9.</strong> 音频</a></li><li class="chapter-item expanded "><a href="camera.html"><strong aria-hidden="true">10.</strong> 相机</a></li><li class="chapter-item expanded "><a href="sprite.html" class="active"><strong aria-hidden="true">11.</strong> 精灵</a></li><li class="chapter-item expanded "><a href="data.html"><strong aria-hidden="true">12.</strong> 数据类型</a></li><li class="chapter-item expanded "><a href="behaviors.html"><strong aria-hidden="true">13.</strong> 行为</a></li><li class="chapter-item expanded "><a href="resource.html"><strong aria-hidden="true">14.</strong> 资源</a></li><li class="chapter-item expanded "><a href="bundle.html"><strong aria-hidden="true">15.</strong> Bundle</a></li><li class="chapter-item expanded "><a href="query.html"><strong aria-hidden="true">16.</strong> 查询</a></li><li class="chapter-item expanded "><a href="coordinate.html"><strong aria-hidden="true">17.</strong> 坐标系</a></li><li class="chapter-item expanded "><a href="rendering.html"><strong aria-hidden="true">18.</strong> 渲染</a></li><li class="chapter-item expanded "><a href="transform.html"><strong aria-hidden="true">19.</strong> 变换</a></li><li class="chapter-item expanded "><a href="time.html"><strong aria-hidden="true">20.</strong> 时间</a></li><li class="chapter-item expanded "><a href="load_assets.html"><strong aria-hidden="true">21.</strong> 加载资产</a></li><li class="chapter-item expanded "><a href="keyboard.html"><strong aria-hidden="true">22.</strong> 键盘</a></li><li class="chapter-item expanded "><a href="mouse.html"><strong aria-hidden="true">23.</strong> 鼠标</a></li><li class="chapter-item expanded "><a href="window.html"><strong aria-hidden="true">24.</strong> 窗口</a></li><li class="chapter-item expanded "><a href="event.html"><strong aria-hidden="true">25.</strong> 事件</a></li><li class="chapter-item expanded "><a href="local.html"><strong aria-hidden="true">26.</strong> 本地资源</a></li><li class="chapter-item expanded "><a href="schedule.html"><strong aria-hidden="true">27.</strong> Schedule</a></li><li class="chapter-item expanded "><a href="state.html"><strong aria-hidden="true">28.</strong> 状态</a></li><li class="chapter-item expanded "><a href="plugin.html"><strong aria-hidden="true">29.</strong> 插件</a></li><li class="chapter-item expanded "><a href="change_detection.html"><strong aria-hidden="true">30.</strong> 变化检测</a></li><li class="chapter-item expanded "><a href="parent_child.html"><strong aria-hidden="true">31.</strong> 父子组件</a></li><li class="chapter-item expanded "><a href="visibility.html"><strong aria-hidden="true">32.</strong> 可见性</a></li><li class="chapter-item expanded "><a href="hdr.html"><strong aria-hidden="true">33.</strong> HDR和色调映射</a></li><li class="chapter-item expanded "><a href="bloom.html"><strong aria-hidden="true">34.</strong> 辉光</a></li><li class="chapter-item expanded "><a href="ime.html"><strong aria-hidden="true">35.</strong> 输入法</a></li><li class="chapter-item expanded "><a href="code.html"><strong aria-hidden="true">36.</strong> 代码组织</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">on bevy way</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="sprites-精灵"><a class="header" href="#sprites-精灵">Sprites 精灵</a></h1>
+<p><code>Sprite</code> 表示我们想要<a href="./rendering.html">渲染</a>的图像。</p>
+<p>在 <strong>Bevy</strong> 中，<code>Sprite</code> 保存特定纹理的位置、颜色和大小数据。</p>
+<p>当我们谈论纹理时，我们实际上是指为<a href="https://en.wikipedia.org/wiki/Raster_graphics">光栅图形</a>表示的任何图像数据，它使用二维图片作为像素颜色值的矩阵。</p>
+<p>我们将这些图像加载到我们的<a href="./assets.html">资产</a>中，并将它们添加到具有 <code>Sprite</code> 组件的实体中，该组件将使用 GPU 将它们渲染到我们的游戏中。</p>
+<h2 id="rendering-a-sprite-渲染精灵"><a class="header" href="#rendering-a-sprite-渲染精灵">Rendering a sprite 渲染精灵</a></h2>
+<p>为了渲染 <code>sprite</code> ，我们将 <code>SpriteBundle</code> 添加到实体中：</p>
+<pre><code class="language-rust">fn spawn_player(mut commands: Commands, asset_server: Res&lt;AssetServer&gt;) {
+  commands.spawn((
+    SpriteBundle {
+      transform: Transform::default(),
+      texture: asset_server.load("sprites/ball.png"),
+      ..default()
+    },
+    Player,
+  ));
+}</code></pre>
+<p>这将在屏幕中央生成一个图像。<code>sprite</code> 的大小将是其自然图像尺寸。</p>
+<h3 id="changing-the-sprite-size-更改精灵大小"><a class="header" href="#changing-the-sprite-size-更改精灵大小">Changing the sprite size 更改精灵大小</a></h3>
+<p>我们可以通过在添加 <code>sprite</code> 时提供自定义尺寸来控制 <code>sprite</code> 的大小：</p>
+<pre><code class="language-rust">fn spawn_player_with_custom_size(
+  mut commands: Commands,
+  asset_server: Res&lt;AssetServer&gt;,
+) {
+  commands.spawn((
+    SpriteBundle {
+      texture: asset_server.load("sprites/ball.png"),
+      sprite: Sprite {
+        custom_size: Some(Vec2::new(100., 100.)),
+        ..default()
+      },
+      ..default()
+    },
+    Player,
+  ));
+}</code></pre>
+<p>我们还可以选择设置其  <code>Transform</code>  的比例。</p>
+<h3 id="sprites-load-from-your-assets-folder-从-assets-文件夹加载精灵"><a class="header" href="#sprites-load-from-your-assets-folder-从-assets-文件夹加载精灵">Sprites load from your assets folder 从 assets 文件夹加载精灵</a></h3>
+<p>默认情况下，Bevy 将从 <code>./assets</code> 文件夹加载您的资产。所以当我们写：</p>
+<pre><code class="language-rust">asset_server.load("sprites/ball.png")</code></pre>
+<p><strong>Bevy</strong> 将加载 <code>./assets/sprites/ball.png</code>。<code>load</code> 方法将返回一个 <code>Handle&lt;Image&gt;</code>，我们将其作为组件添加到我们的玩家实体中。</p>
+<p>请记住，<code>AssetServer</code> 不会立即加载图像。</p>
+<p>相反，它返回一个 <a href="./handles.html">handle</a> 组件：<code>Handle&lt;Image&gt;</code> 并将其添加到我们的实体中。在图像完全加载之前，<code>sprite</code> 实际上不会渲染。</p>
+<h2 id="use-a-spritebundle-to-spawn-sprites-使用-spritebundle-生成-sprite"><a class="header" href="#use-a-spritebundle-to-spawn-sprites-使用-spritebundle-生成-sprite">Use a SpriteBundle to spawn sprites 使用 SpriteBundle 生成 Sprite</a></h2>
+<p><code>SpriteBundle</code> 仅包含一对 <code>Sprite</code> 和 <code>Handle&lt;Image&gt;</code> 组件，以及一组其他组件，这些组件有助于在渲染器中定位它：</p>
+<pre><code class="language-rust">// https://docs.rs/bevy/latest/bevy/sprite/prelude/struct.SpriteBundle.html
+pub struct SpriteBundle {
+  // Unique to a sprite bundle:
+  pub sprite: Sprite,
+  pub texture: Handle&lt;Image&gt;,
+
+  // `SpatialBundle` components:
+  pub visibility: Visibility,
+  pub inherited_visibility: InheritedVisibility,
+  pub view_visibility: ViewVisibility,
+  pub transform: Transform,
+  pub global_transform: GlobalTransform,
+}</code></pre>
+<p>将其与 <code>SpatialBundle</code> 进行比较，后者将与实体的正确位置渲染相关的所有组件分组：</p>
+<pre><code class="language-rust">// https://docs.rs/bevy/latest/bevy/prelude/struct.SpatialBundle.html
+pub struct SpatialBundle {
+  pub visibility: Visibility,
+  pub inherited_visibility: InheritedVisibility,
+  pub view_visibility: ViewVisibility,
+  pub transform: Transform,
+  pub global_transform: GlobalTransform,
+}</code></pre>
+<p><code>Sprite</code> 只是一个组件，它准确地表示如何显示我们附加到实体的纹理：</p>
+<pre><code class="language-rust">// https://docs.rs/bevy/latest/bevy/sprite/struct.Sprite.html
+#[repr(C)]
+pub struct Sprite {
+  pub color: Color,
+  pub flip_x: bool,
+  pub flip_y: bool,
+  pub custom_size: Option&lt;Vec2&gt;,
+  pub rect: Option&lt;Rect&gt;,
+  pub anchor: Anchor,
+}</code></pre>
+<p>宏  <code>#[repr(C)]</code>  告诉 <strong>rust</strong> 编译器按照 <strong>C</strong> 语言中的方式创建这个结构体。</p>
+<p><strong>Bevy</strong> 之所以这样做，是因为它最终会通过 <strong>FFI</strong> 边界传递此 <code>sprite</code>，以便由用 <strong>C</strong> 语言编写的库进行处理。</p>
+<h2 id="sprites-are-anchored-sprite-需要锚点"><a class="header" href="#sprites-are-anchored-sprite-需要锚点">Sprites are anchored Sprite 需要锚点</a></h2>
+<p>如果你的摄像机以 <code>(0, 0)</code> 为中心，你会注意到 sprite 出现在屏幕的死点。这是因为 sprite 的默认 <code>Anchor</code> 是 <code>Anchor::Center</code>。</p>
+<p><code>Sprite</code> 的锚点字段决定了 <code>Sprite</code> 相对于其 <code>transform</code> 的定位方式：</p>
+<pre><code class="language-rust">// https://docs.rs/bevy/latest/bevy/sprite/enum.Anchor.html
+pub enum Anchor {
+  Center,
+  BottomLeft,
+  BottomCenter,
+  BottomRight,
+  CenterLeft,
+  CenterRight,
+  TopLeft,
+  TopCenter,
+  TopRight,
+  Custom(Vec2),
+}</code></pre>
+<p><code>Custom(Vec2)</code> 值将按 <code>Sprite</code> 的大小进行比例运算。因此，您不需要知道 sprite 的确切物理大小，只需使用相对值即可。</p>
+<p>所以左上角是 <code>(-0.5, 0.5)</code>中间是 <code>(0., 0.)</code>。</p>
+<h2 id="stacking-sprites-堆叠-sprite"><a class="header" href="#stacking-sprites-堆叠-sprite">Stacking sprites 堆叠 Sprite</a></h2>
+<p>生成 <code>sprite</code> 时，其  <code>Transform</code>  的  <code>z</code>  值将决定其绘制顺序。</p>
+<p>如果希望一个 <code>sprite</code> 在另一个 <code>sprite</code> 之前渲染，则需要将其 <code>z-index</code> 设置为高于在后台显示的 <code>sprite</code>。</p>
+<pre><code class="language-rust">fn setup_game(mut commands: Commands, asset_server: Res&lt;AssetServer&gt;) {
+  // z-index is 0. so it will get spawned behind
+  commands.spawn((
+    SpriteBundle {
+      transform: Transform::default(),
+      texture: asset_server.load("sprites/grass.png"),
+      ..default()
+    },
+    Tile,
+  ));
+
+  // z-index is 1. so it will get spawned in front of our grass tile
+  commands.spawn((
+    SpriteBundle {
+      transform: Transform::from_xyz(0., 0., 1.),
+      texture: asset_server.load("sprites/ball.png"),
+      ..default()
+    },
+    Player,
+  ));
+}</code></pre>
+<p><code>ball.png</code> <code>Sprite</code> 将会显示在 <code>grass.png</code> <code>Sprite</code> 上面。</p>
+<h2 id="creating-a-sprite-sheet-创建-sprite-表"><a class="header" href="#creating-a-sprite-sheet-创建-sprite-表">Creating a sprite sheet 创建 Sprite 表</a></h2>
+<p>有时我们想要动画的 <code>sprite</code>，或者我们可以在运行时更改它们的纹理。为此，我们使用 <code>SpriteSheetBundle</code>。</p>
+<p>这与 <code>SpriteBundle</code> 相同，只是它需要一个需要 <code>TextureAtlasLayout</code>的 <code>TextureAtlas</code>。</p>
+<p><code>TextureAtlasLayout</code> 是有关如何分解 <code>spritesheet</code> （如瓦片地图）的容器。因此，我们提供了 <code>layout</code> 参数，然后使用 <code>layout</code> 来切片任何 <code>sprite</code> 表。</p>
+<p>要加载 <code>sprite</code> 表，一种常见的模式是在为其定义  <code>FromWorld</code>  的资源中执行加载：</p>
+<pre><code class="language-rust">#[derive(Resource)]
+struct PlayerSpriteSheet(Handle&lt;TextureAtlasLayout&gt;);
+
+impl FromWorld for PlayerSpriteSheet {
+  fn from_world(world: &amp;mut World) -&gt; Self {
+    let texture_atlas = TextureAtlasLayout::from_grid(
+      (24, 24).into(), // The size of each image
+      7,               // The number of columns
+      1,               // The number of rows
+      None,            // Padding
+      None,            // Offset
+    );
+
+    let mut texture_atlases = world
+      .get_resource_mut::&lt;Assets&lt;TextureAtlasLayout&gt;&gt;()
+      .unwrap();
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+    Self(texture_atlas_handle)
+  }
+}
+
+fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .init_resource::&lt;PlayerSpriteSheet&gt;()
+    .run();
+}</code></pre>
+<p>在本例中，我们正在加载一个新的纹理图集布局，我们可以将其应用于图像以获取精灵表。我们的布局初始化为：</p>
+<ul>
+<li>7列</li>
+<li>1行</li>
+<li>精灵每帧图像大小为 <code>24x24</code> 。</li>
+</ul>
+<p>然后我们可以轻松地引用这个布局并在我们的其他系统中创建精灵表：</p>
+<pre><code class="language-rust">fn spawn_player_sprite(
+  mut commands: Commands,
+  sprite_atlas: Res&lt;PlayerSpriteSheet&gt;,
+  asset_server: Res&lt;AssetServer&gt;,
+) {
+  let sprite: Handle&lt;Image&gt; = asset_server.load("animations/player.png");
+
+  commands.spawn((
+    SpriteBundle {
+      texture: sprite.clone(),
+      ..default()
+    },
+    TextureAtlas {
+      layout: sprite_atlas.0.clone(),
+      index: 0,
+    },
+  ));
+}</code></pre>
+<p>纹理图集将根据一系列表示图像在精灵表上的像素位置的 <code>Vec&lt;Rect&gt;</code> 来分割图像。我们刚刚创建的相同布局可以用于许多图像，如果您使用许多固定大小的精灵表，这会很方便。</p>
+<h3 id="texture-atlases-纹理图集"><a class="header" href="#texture-atlases-纹理图集">Texture atlases 纹理图集</a></h3>
+<p>在单个文件中存储许多纹理是很常见的。精灵表或图块地图可以包含布置在 2D 网格上的数百个纹理。</p>
+<p><strong>Bevy</strong> 使用 <code>TextureAtlas</code> 的概念，其中包含 <code>TextureAtlasLayout</code> 和 <code>index</code>，这使得处理这些类型的文件变得更加容易。</p>
+<p>每个 <code>TextureAtlasLayout</code> 也是一个 <code>Asset</code>，如图像、网格等。因此添加它们需要使用资源服务器加载它们并保留对 <code>Handle&lt;TextureAtlasLayout&gt;</code>。</p>
+<p>通常，我们将这些引用存储在资源中，以便我们可以在其他系统中轻松引用它们。但是没有什么可以阻止您将其存储为实体上的组件。</p>
+<h3 id="texture-atlas-builder-纹理图集生成器"><a class="header" href="#texture-atlas-builder-纹理图集生成器">Texture atlas builder 纹理图集生成器</a></h3>
+<p><code>TextureAtlas</code> 假设您给它一个图像文件，它会将其分割成许多纹理。</p>
+<p>一些工作流程将精灵表分成许多单独的文件。如果我们有许多_单独的图*_并且想要将它们组合成_单个_精灵表，我们可以使用<code>TextureAtlasBuilder</code>。</p>
+<p>首先，我们需要在游戏早期加载纹理。这可以在上面示例中的  <code>FromWorld</code>  实现中完成，但出于多样性考虑，我们将从启动系统加载它：</p>
+<pre><code class="language-rust">// https://github.com/bevyengine/bevy/blob/release-0.14.2/examples/2d/texture_atlas.rs
+#[derive(Resource, Default)]
+struct RpgSpriteFolder(Handle&lt;LoadedFolder&gt;);
+
+fn load_textures(mut commands: Commands, asset_server: Res&lt;AssetServer&gt;) {
+  let folder = RpgSpriteFolder(asset_server.load_folder("textures/rpg"));
+
+  // load multiple, individual sprites from a folder
+  commands
+    .insert_resource(folder);
+}</code></pre>
+<p>这将加载  <code>./assets/textures/rpg</code>  中的每个文件。</p>
+<p>稍后，在它们加载后，我们可以创建纹理图集：</p>
+<pre><code class="language-rust">fn create_texture_atlas(
+  loaded_folders: Res&lt;Assets&lt;LoadedFolder&gt;&gt;,
+  rpg_sprite_handles: Res&lt;RpgSpriteFolder&gt;,
+  mut atlases: ResMut&lt;Assets&lt;TextureAtlasLayout&gt;&gt;,
+  mut textures: ResMut&lt;Assets&lt;Image&gt;&gt;,
+) {
+  let mut builder = TextureAtlasBuilder::default();
+  let folder = loaded_folders.get(&amp;rpg_sprite_handles.0).unwrap();
+
+  for handle in folder.handles.iter() {
+    let id = handle.id().typed_unchecked::&lt;Image&gt;();
+
+    let Some(texture) = textures.get(id) else {
+      warn!("Texture not loaded: {:?}", handle.path().unwrap());
+      continue;
+    };
+
+    builder.add_texture(Some(id), texture);
+  }
+
+  let (atlas, texture) = builder.build().unwrap();
+  textures.add(texture);
+  atlases.add(atlas);
+}</code></pre>
+<p>对于字体图集或动态阴影贴图等高级用例，还有  <code>DynamicTextureAtlasBuilder</code>，它可以在运行时以低廉的成本进行更新，而不是最终确定。然而，不鼓励将其用于带有动画的精灵表。</p>
+<h2 id="getting-the-bounding-box-of-transformed-sprites-获取变换后的精灵的边界框"><a class="header" href="#getting-the-bounding-box-of-transformed-sprites-获取变换后的精灵的边界框">Getting the bounding box of transformed sprites 获取变换后的精灵的边界框</a></h2>
+<p>精灵图像尺寸可能与屏幕上图像的物理尺寸不完全相同。</p>
+<p>精灵的渲染方式由其 <code>Transform</code> 比例或 <code>custom_size</code>（如果提供）决定。这意味着显示器上精灵的图像尺寸（物理尺寸）可能与其在游戏世界中的逻辑尺寸不同。</p>
+<p>因此，为了获得真实的逻辑尺寸，我们应该对图像的原始尺寸应用相同的缩放。一个简单的方法是使用 <code>Rect</code> 来表示它：</p>
+<pre><code class="language-rust">fn print_sprite_bounding_boxes(
+  mut sprites: Query&lt;(&amp;Transform, &amp;Handle&lt;Image&gt;), With&lt;Sprite&gt;&gt;,
+  assets: Res&lt;Assets&lt;Image&gt;&gt;,
+) {
+  for (transform, image_handle) in &amp;mut sprites {
+    let image_size = assets.get(image_handle).unwrap().size_f32();
+
+    info!("image_dimensions: {:?}", image_size);
+    info!("position: {:?}", transform.translation);
+    info!("scale: {:?}", transform.scale);
+
+    let scaled = image_size * transform.scale.truncate();
+    let bounding_box =
+      Rect::from_center_size(transform.translation.truncate(), scaled);
+
+    info!("bounding_box: {:?}", bounding_box);
+  }
+}</code></pre>
+<p>控制台的输出将是：</p>
+<pre><code>image_dimensions: Vec2(288.0, 288.0)
+position: Vec3(0.0, 0.0, 0.0)
+scale: Vec3(0.1, 0.1, 0.1)
+scaled_image_dimension: Vec2(28.800001, 28.800001)
+bounding_box: Rect {
+    min: Vec2(-14.400001, -14.400001),
+    max: Vec2(14.400001, 14.400001)
+}
+</code></pre>
+<h2 id="clicking-on-our-sprites-点击精灵"><a class="header" href="#clicking-on-our-sprites-点击精灵">Clicking on our sprites 点击精灵</a></h2>
+<p>上面的代码将返回游戏世界中精灵边界的逻辑值。然而，如果我们想点击它，我们就会遇到一个大问题：</p>
+<p>实际的鼠标光标需要根据我们当前<code>Camera</code>的视图进行投影。过去，这必须手动完成，并涉及计算标准化设备坐标。但最近  <code>Camera</code>  组件有一些方法可以帮助我们：</p>
+<pre><code class="language-rust">fn cast_cursor_ray(
+  windows: Query&lt;&amp;Window&gt;,
+  cameras: Query&lt;(&amp;Camera, &amp;GlobalTransform)&gt;,
+) {
+  let window = windows.single();
+  let (camera, position) = cameras.single();
+
+  // check if the cursor is inside the window and get its position
+  // then, ask bevy to convert into world coordinates, and truncate to discard Z
+  if let Some(world_position) = window
+    .cursor_position()
+    .and_then(|cursor| camera.viewport_to_world(position, cursor))
+    .map(|ray| ray.origin.truncate())
+  {
+    info!("World coords: {}/{}", world_position.x, world_position.y);
+  }
+}</code></pre>
+<p>标准化设备坐标将是 <code>Vec3</code>，其范围为 <code>x</code> 和 <code>y</code> 中的 <code>(-1, 1)</code>方向和 <code>z</code> 轴上的 <code>(0, 1)</code>。</p>
+<p>这些标准化的设备坐标允许我们将鼠标投射到游戏世界中，以给出游戏世界中鼠标的逻辑值，无论我们的相机如何放大或缩小。</p>
+<p>然后，我们可以检查这些坐标是否位于边界框的  <code>Rect</code>  内，以注册单击事件并在其他系统中对它们做出反应。</p>
+<h2 id="how-sprites-are-rendered-精灵是如何渲染的"><a class="header" href="#how-sprites-are-rendered-精灵是如何渲染的">How sprites are rendered 精灵是如何渲染的</a></h2>
+<p>精灵的渲染是通过 wgpu 将纹理加载到 GPU 上来高效渲染的。</p>
+<p>要进行任何后期处理，我们可以设置一个特定的  <code>Camera</code>  来仅渲染我们的精灵并向其添加额外的处理。</p>
+<p>当渲染系统消耗精灵时，您的  <code>Sprite</code>  组件在提供给渲染管道之前会扩展为  <code>ExtractedSprite</code>。</p>
+<p>最后，精灵被批处理到包含  <code>SpriteBatch</code>  组件的实体中，这有助于加快渲染速度。此批处理对前面提到的 z-index 很敏感，它将决定渲染顺序。</p>
+<p><strong>Bevy</strong> 会自动为屏幕外的精灵设置  <code>ComputedVisibility</code>，并且渲染系统不会尝试渲染它们。</p>
+<h2 id="pixel-perfect-rendering-像素完美渲染"><a class="header" href="#pixel-perfect-rendering-像素完美渲染">Pixel perfect rendering 像素完美渲染</a></h2>
+<p>默认情况下，图像是抗锯齿的，这使得它们的边缘在放置时稍微模糊。这可能会导致精灵中出现“出血”，并且可能会在精灵的边缘出现不应该出现的线条。</p>
+<p>当在游戏中使用大部分精灵时，您需要通过将  <code>ImagePlugin</code>  设置为使用最近邻采样来防止精灵模糊：</p>
+<pre><code class="language-rust">fn main() {
+  App::new()
+    .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+    .init_resource::&lt;PlayerSpriteSheet&gt;()
+    .run();
+}</code></pre>
+<p>默认值是线性插值，这会使精灵的边缘看起来模糊。最近邻采样将保留硬边缘并使精灵看起来像素完美。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="camera.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="data.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="camera.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="data.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
