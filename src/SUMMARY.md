@@ -11,6 +11,7 @@
 - [音频](./audio.md)
 - [相机](./camera.md)
 - [精灵](./sprite.md)
+- [计时器](./timer.md)
 - [数据类型](./data.md)
 - [行为](./behaviors.md)
 - [资源](./resource.md)

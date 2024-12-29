@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>可见性 - on bevy way</title>
+        <title>计时器 - on bevy way</title>
 
 
         <!-- Custom HTML head -->
@@ -152,91 +152,16 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="可见性"><a class="header" href="#可见性">可见性</a></h1>
-<p>在 Bevy 中，Visibility 用于控制某物是否被渲染。如果你希望一个实体存在于世界中，但不显示出来，你可以将其隐藏。</p>
-<pre><code class="language-rust">commands
-    .spawn(
-        MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(200., 200.)).into(),
-            material: materials.add(Color::Srgba(Srgba::RED)),
-            transform: Transform::from_xyz(-400., 0., 0.),
-            visibility: Visibility::Hidden,
-            ..default()
-        }
-    ));</code></pre>
-<h2 id="可见性组件"><a class="header" href="#可见性组件">可见性组件</a></h2>
-<p>在 Bevy 中，可见性由多个组件表示：</p>
-<ul>
-<li>Visibility：用户控制的开关（在这里设置你想要的）</li>
-<li>InheritedVisibility：用于 Bevy 跟踪来自任何父实体的状态</li>
-<li>ViewVisibility：用于 Bevy 跟踪实体是否应该实际显示</li>
-</ul>
-<p>任何表示游戏世界中可渲染对象的实体都需要包含这些组件。Bevy 内置的大多数 Bundle 类型都包括它们。</p>
-<p>如果你在创建自定义实体时不使用这些 Bundle ，可以使用以下之一来确保不会遗漏：</p>
-<ul>
-<li>SpatialBundle：用于变换 + 可见性</li>
-<li>VisibilityBundle：仅用于可见性</li>
-</ul>
-<pre><code class="language-rust">commands.spawn((
-        Mesh2dHandle(meshes.add(Circle::new(100.))),
-        materials.add(Color::Srgba(Srgba::BLUE)),
-        // SpatialBundle::default(),
-        // TransformBundle::default(),
-        Transform::default(),
-        GlobalTransform::default(),
-        // VisibilityBundle::default(),
-        Visibility::default(),
-        InheritedVisibility::default(),
-        ViewVisibility::default(),
-    ));</code></pre>
-<p>如果你没有正确添加这些组件（例如，手动添加了 Visibility 组件但忘记了其他组件，因为你没有使用 Bundle），你的实体将不会渲染！</p>
-<h2 id="visibility"><a class="header" href="#visibility">Visibility</a></h2>
-<p>Visibility 是“用户控制的开关”。这是你为当前实体指定所需状态的地方：</p>
-<ul>
-<li>Inherited（默认）：根据父实体显示/隐藏</li>
-<li>Visible：始终显示实体，无论父实体如何</li>
-<li>Hidden：始终隐藏实体，无论父实体如何</li>
-</ul>
-<p>如果当前实体有任何子实体且其可见性为 Inherited，当你将当前实体设置为 Visible 或 Hidden 时，它们的可见性将受到影响。</p>
-<p>如果一个实体有父实体，但父实体缺少与可见性相关的组件，行为将如同没有父实体一样。</p>
-<h2 id="inheritedvisibility"><a class="header" href="#inheritedvisibility">InheritedVisibility</a></h2>
-<p>InheritedVisibility 表示当前实体基于其父实体的可见性状态。</p>
-<p>InheritedVisibility 的值应视为只读。它由 Bevy 内部管理，类似于变换传播。一个“可见性传播”系统在 PostUpdate 调度中运行。</p>
-<p>如果你想读取当前帧的最新值，应将你的系统添加到 PostUpdate 调度中，并在 VisibilitySystems::VisibilityPropagate 之后排序。</p>
-<pre><code class="language-rust">fn print_triangle_iherited_visibility(triangle: Query&lt;&amp;InheritedVisibility, With&lt;MyTriangle&gt;&gt;) {
-    let Ok(inherited_visibility) = triangle.get_single() else {
-        return;
-    };
-    info!("triangle inherited visibility: {inherited_visibility:?}");
-}
-
-print_triangle_iherited_visibility
-    .after(VisibilitySystems::VisibilityPropagate)</code></pre>
-<h2 id="viewvisibility"><a class="header" href="#viewvisibility">ViewVisibility</a></h2>
-<p>ViewVisibility 表示 Bevy 关于是否需要渲染该实体的最终决定。</p>
-<p>ViewVisibility 的值是只读的。它由 Bevy 内部管理。</p>
-<p>它用于“剔除”：如果实体不在任何相机或光源的范围内，则不需要渲染，因此 Bevy 将其隐藏以提高性能。</p>
-<p>每帧，在“可见性传播”之后，Bevy 将检查哪些实体可以被哪些视图（相机或光源）看到，并将结果存储在这些组件中。</p>
-<p>如果你想读取当前帧的最新值，应将你的系统添加到 PostUpdate 调度中，并在 VisibilitySystems::CheckVisibility 之后排序。</p>
-<pre><code class="language-rust">fn print_triangle_view_visibility(triangle: Query&lt;&amp;ViewVisibility, With&lt;MyTriangle&gt;&gt;) {
-    let Ok(view_visibility) = triangle.get_single() else {
-        return;
-    };
-    info!("triangle view visibility: {view_visibility:?}");
-}
-
-print_triangle_view_visibility
-    .after(VisibilitySystems::CheckVisibility)</code></pre>
-
+                        
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="parent_child.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="sprite.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="hdr.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="data.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -246,11 +171,11 @@ print_triangle_view_visibility
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="parent_child.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="sprite.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="hdr.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="data.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
